@@ -88,8 +88,9 @@ export async function savePost(_prev: PostActionState, formData: FormData): Prom
         })
         .where(eq(posts.id, id));
     }
-  } catch {
-    return { error: "Gagal menyimpan ke database." };
+  } catch (e) {
+    console.error("[savePost] DB error:", e);
+    return { error: `Gagal menyimpan ke database: ${(e as Error).message}` };
   }
 
   refreshPublic(id ? slug : null);
