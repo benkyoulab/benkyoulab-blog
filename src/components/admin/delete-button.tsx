@@ -21,7 +21,7 @@ export default function DeleteButton({ id }: { id: number }) {
       <m.button
         whileTap={{ scale: 0.85 }}
         type="submit"
-        className="cursor-pointer text-red-600/40 opacity-0 transition-colors hover:text-red-600 group-hover:static group-hover:opacity-100"
+        className="cursor-pointer text-red-600 opacity-60 duration-150 hover:text-red-600 hover:opacity-100"
         aria-label="Hapus artikel"
       >
         🗑️

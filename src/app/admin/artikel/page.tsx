@@ -56,7 +56,7 @@ export default async function ArtikelListPage() {
           </thead>
           <tbody>
             {rows.map((p) => (
-              <tr key={p.id} className="border-b border-gray-50 last:border-0">
+              <tr key={p.id} className="group border-b border-gray-50 last:border-0">
                 <td className="px-4 py-3">
                   <p className="font-medium text-gray-900">{p.title}</p>
                   <p className="text-xs text-gray-400">/{p.slug}</p>
