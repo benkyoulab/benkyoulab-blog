@@ -1,33 +1,82 @@
+"use client";
+
+import Link from "next/link";
+import { motion } from "motion/react";
+
+const LINKS = [
+  { href: "/", label: "Beranda" },
+  { href: "/kategori", label: "Kategori" },
+  { href: "/tentang", label: "Tentang" },
+];
+
 export default function SiteFooter() {
   return (
-    <footer className="relative mt-16 overflow-hidden border-t border-gray-100 bg-gray-50">
-      {/* aksen kanji dekoratif samar, ciri brand BenkyouLab */}
+    <footer className="relative mt-20 overflow-hidden border-t border-gray-100 bg-gray-50">
       <span
         aria-hidden
         className="pointer-events-none absolute -bottom-10 right-2 select-none text-[9rem] leading-none font-bold text-red-50"
       >
         学
       </span>
-      <div className="relative mx-auto max-w-5xl px-4 py-10">
-        <p className="text-lg font-bold tracking-tight">
-          Benkyou<span className="text-red-600">Lab</span>
-        </p>
-        <p className="mt-1 text-sm text-gray-600">
-          日本語を学ぼう、未来を築く — belajar bahasa Jepang untuk membangun masa depan.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-gray-500">
-          <a href="/" className="hover:text-red-600">
-            Beranda
-          </a>
-          <a href="/kategori" className="hover:text-red-600">
-            Kategori
-          </a>
-          <a href="/admin" className="hover:text-red-600">
-            Login penulis
-          </a>
-        </div>
-        <p className="mt-6 text-xs text-gray-400">
-          © {new Date().getFullYear()} Benkyou Lab
+      <div className="relative mx-auto max-w-5xl px-4 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between"
+        >
+          <div className="max-w-sm">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 font-bold text-white">
+                勉
+              </span>
+              <span className="text-lg font-bold tracking-tight">
+                Benkyou<span className="text-red-600">Lab</span>
+              </span>
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-gray-600">
+              日本語を学ぼう、未来を築く — belajar bahasa Jepang langkah demi langkah, dari huruf
+              pertama sampai percaya diri mengobrol.
+            </p>
+          </div>
+
+          <div className="flex gap-14">
+            <div>
+              <p className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
+                Jelajahi
+              </p>
+              <ul className="mt-3 space-y-2 text-sm">
+                {LINKS.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="text-gray-600 transition-colors hover:text-red-600">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
+                Untuk Penulis
+              </p>
+              <ul className="mt-3 space-y-2 text-sm">
+                <li>
+                  <Link href="/login" className="text-gray-600 transition-colors hover:text-red-600">
+                    Masuk dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/admin" className="text-gray-600 transition-colors hover:text-red-600">
+                    Kelola artikel
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </motion.div>
+        <p className="relative mt-10 border-t border-gray-200/70 pt-6 text-xs text-gray-400">
+          © {new Date().getFullYear()} Benkyou Lab · Dibuat dengan 🍵 dan banyak kanji
         </p>
       </div>
     </footer>

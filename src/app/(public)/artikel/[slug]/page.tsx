@@ -7,6 +7,8 @@ import { posts, users, categories } from "@/db/schema";
 import { auth } from "@/auth";
 import PostCard from "@/components/post-card";
 import SafeImg from "@/components/safe-img";
+import FadeIn from "@/components/fade-in";
+import ReadingProgress from "@/components/reading-progress";
 import { formatTanggal } from "@/lib/format-date";
 
 // ponytail: sengaja TIDAK pakai revalidate/ISR — halaman ini membaca sesi utk preview draft;
@@ -114,47 +116,89 @@ export default async function ArtikelDetail({ params }: Props) {
 
   return (
     <main className="flex-1 bg-white">
-      <article className="mx-auto max-w-prose px-4 py-10">
-        <div className="flex flex-wrap items-center gap-2 text-sm">
-          {post.categoryName && (
-            <Link
-              href={`/kategori/${post.categorySlug}`}
-              className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
-            >
-              {post.categoryName}
-            </Link>
-          )}
-          {post.status === "draft" && (
-            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
-              DRAFT — preview
-            </span>
-          )}
-        </div>
+      <ReadingProgress />
 
-        <h1 className="mt-4 text-4xl font-bold tracking-tight text-gray-900">{post.title}</h1>
-        <p className="mt-3 text-sm text-gray-400">
-          {post.authorName} · {formatTanggal(post.publishedAt ?? post.updatedAt)}
-        </p>
+      <article className="mx-auto max-w-prose px-4 py-10 sm:py-14">
+        <FadeIn y={12}>
+          <nav className="text-sm text-gray-400">
+            <Link href="/" className="transition-colors hover:text-red-600">
+              Beranda
+            </Link>
+            <span className="mx-2">/</span>
+            {post.categoryName && post.categorySlug ? (
+              <Link href={`/kategori/${post.categorySlug}`} className="transition-colors hover:text-red-600">
+                {post.categoryName}
+              </Link>
+            ) : (
+              <span>Artikel</span>
+            )}
+          </nav>
+        </FadeIn>
+
+        <FadeIn delay={0.06} y={12}>
+          <div className="mt-5 flex flex-wrap items-center gap-2 text-sm">
+            {post.categoryName && (
+              <Link
+                href={`/kategori/${post.categorySlug}`}
+                className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-200"
+              >
+                {post.categoryName}
+              </Link>
+            )}
+            {post.status === "draft" && (
+              <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                DRAFT — preview
+              </span>
+            )}
+          </div>
+        </FadeIn>
+
+        <FadeIn delay={0.1} y={12}>
+          <h1 className="mt-4 text-3xl leading-tight font-bold tracking-tight text-gray-900 sm:text-4xl">
+            {post.title}
+          </h1>
+          <p className="mt-4 text-sm text-gray-400">
+            ✍️ {post.authorName} · 📅{" "}
+            {formatTanggal(post.publishedAt ?? post.updatedAt)}
+          </p>
+        </FadeIn>
 
         {post.thumbnailUrl && (
-          <SafeImg
-            src={post.thumbnailUrl}
-            alt={post.title}
-            className="mt-6 w-full rounded-2xl"
-          />
+          <FadeIn delay={0.15}>
+            <SafeImg src={post.thumbnailUrl} alt={post.title} className="mt-8 w-full rounded-2xl shadow-sm" />
+          </FadeIn>
         )}
 
         {/* Aman: HTML sudah disanitasi server-side saat simpan (lib/sanitize.ts) */}
         <div
-          className="prose prose-gray mt-8 max-w-none prose-headings:text-gray-900 prose-a:text-red-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-blockquote:border-red-200"
+          className="prose prose-gray mt-10 max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:font-medium prose-a:text-red-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-blockquote:border-l-red-300 prose-blockquote:bg-red-50/50 prose-blockquote:py-1 prose-blockquote:italic"
           dangerouslySetInnerHTML={{ __html: post.contentHtml }}
         />
+
+        <FadeIn>
+          <div className="mt-12 flex items-center gap-4 rounded-2xl bg-gray-50 p-6 ring-1 ring-gray-100">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-600 text-xl font-bold text-white">
+              勉
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-gray-900">{post.authorName}</p>
+              <p className="text-sm text-gray-600">Menulis materi bahasa Jepang untuk pemula di Benkyou Lab.</p>
+            </div>
+          </div>
+        </FadeIn>
       </article>
 
       {related.length > 0 && (
-        <section className="border-t border-gray-100 bg-gray-50 py-10">
+        <section className="border-t border-gray-100 bg-gray-50 py-12">
           <div className="mx-auto max-w-5xl px-4">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900">Artikel lainnya</h2>
+            <FadeIn>
+              <div className="flex items-end justify-between">
+                <h2 className="text-2xl font-bold tracking-tight text-gray-900">Artikel lainnya</h2>
+                <Link href="/kategori" className="text-sm font-medium text-red-600 hover:text-red-700">
+                  Semua kategori →
+                </Link>
+              </div>
+            </FadeIn>
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((p) => (
                 <PostCard key={p.slug} post={p} />
