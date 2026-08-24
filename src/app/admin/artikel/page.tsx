@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { posts, users, categories } from "@/db/schema";
 import { auth } from "@/auth";
+import DeleteButton from "@/components/admin/delete-button";
 
 export const metadata = { title: "Artikel" };
 
@@ -70,7 +71,7 @@ export default async function ArtikelListPage() {
                   <Link href={`/admin/artikel/${p.id}/edit`} className="text-red-600 hover:underline">
                     Edit
                   </Link>
-                  {isAdmin && <span className="ml-2 text-gray-400">(hapus? todo)</span>}
+                  {isAdmin && <DeleteButton id={p.id} />}
                 </td>
               </tr>
             ))}

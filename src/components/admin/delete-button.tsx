@@ -1,3 +1,5 @@
+"use client";
+
 import { m } from "motion/react";
 import { deletePostAction } from "@/app/admin/artikel/actions";
 
@@ -7,7 +9,11 @@ export default function DeleteButton({ id }: { id: number }) {
     <form
       action={deletePostAction}
       onSubmit={(e) => {
-        if (!confirm(`Hapus artikel #${id}? Tindakan ini tidak bisa dibatalkan.`))
+        if (
+          !confirm(
+            `Hapus artikel #${id}? Tindakan ini tidak bisa dibatalkan.`,
+          )
+        )
           e.preventDefault();
       }}
     >
