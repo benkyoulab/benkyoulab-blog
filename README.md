@@ -88,6 +88,9 @@ Guard berlapis: `proxy.ts` middleware + `auth()` di setiap server action + cek r
 | `drizzle-kit push` hang lewat :6543 | Set `DRIZZLY_URL` ke session pooler :5432 |
 | Login "Email atau password salah" padahal DB sudah benar | Coba incognito, hindari autofill; cek `AUTH_SECRET` di Vercel env sama dgn lokal |
 | DB Supabase tidur (>7 hari idle) | Buka dashboard Supabase untuk wake up |
+|| `/login` 500 (server component crash) | Jangan pernah `import { getCsrfToken } from "next-auth/react"` di **server component** — itu Client Component (`"use client"`); import-nya crash SSR. Solusi: `signIn("credentials")` otomatis handle CSRF via cookie. Jika butuh CSRF token, fetch via absolute URL (relatif `fetch("/api/...")` **gagal** di serverless: "Failed to parse URL"). |
+|| `/admin/artikel` 500 — `Failed to parse URL from /api/auth/csrf` | Sama seperti di atas: hapus fetch relatif, gunakan `signIn` langsung, atau absolute URL `${process.env.NEXT_PUBLIC_APP_URL}/api/...`. |
+|| Debug endpoint masih tersisa | Hapus semua route di `src/app/api/debug-*/` sebelum deploy production.|
 
 ## Lisensi
 Konten artikel: CC BY-NC 4.0. Kode: MIT.
