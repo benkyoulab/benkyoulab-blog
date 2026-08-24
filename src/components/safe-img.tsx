@@ -17,7 +17,7 @@ export default function SafeImg({
   if (failed) {
     return (
       <div
-        className={`flex items-center justify-center bg-gradient-to-br from-red-50 to-gray-100 text-4xl ${className ?? ""}`}
+        className={`flex items-center justify-center bg-gradient-to-br from-red-50 to-gray-100 text-4xl dark:from-red-500/10 dark:to-gray-800 ${className ?? ""}`}
       >
         🎌
       </div>

@@ -33,14 +33,14 @@ export default async function KategoriIndex() {
     .orderBy(asc(categories.name));
 
   return (
-    <main className="flex-1 bg-gray-50">
+    <main className="flex-1 bg-gray-50 dark:bg-gray-950">
       <div className="mx-auto max-w-5xl px-4 py-12 sm:py-16">
         <FadeIn>
           <p className="text-sm font-semibold text-red-600 uppercase">カテゴリー</p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
             Jelajahi berdasarkan kategori
           </h1>
-          <p className="mt-2 max-w-lg text-gray-600">
+          <p className="mt-2 max-w-lg text-gray-600 dark:text-gray-400">
             Setiap kategori adalah jalur belajar — mulai dari satu, susun pelan-pelan.
           </p>
         </FadeIn>
@@ -50,14 +50,14 @@ export default async function KategoriIndex() {
             <FadeIn key={c.slug} delay={i * 0.06}>
               <Link
                 href={`/kategori/${c.slug}`}
-                className="group flex h-full flex-col rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100 transition-shadow hover:shadow-md"
+                className="group flex h-full flex-col rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100 transition-shadow hover:shadow-md dark:bg-gray-900 dark:ring-gray-800"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-xl font-bold text-red-600 transition-colors group-hover:bg-red-600 group-hover:text-white">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-xl font-bold text-red-600 transition-colors group-hover:bg-red-600 group-hover:text-white dark:bg-red-500/10 dark:text-red-400">
                   {ICONS[c.slug] ?? "📚"}
                 </span>
-                <h2 className="mt-4 font-semibold text-gray-900 group-hover:text-red-600">{c.name}</h2>
+                <h2 className="mt-4 font-semibold text-gray-900 group-hover:text-red-600 dark:text-gray-100 dark:group-hover:text-red-400">{c.name}</h2>
                 {c.description && (
-                  <p className="mt-1.5 line-clamp-2 text-sm text-gray-600">{c.description}</p>
+                  <p className="mt-1.5 line-clamp-2 text-sm text-gray-600 dark:text-gray-400">{c.description}</p>
                 )}
                 <p className="mt-auto pt-4 text-xs text-gray-400">{c.n} artikel →</p>
               </Link>

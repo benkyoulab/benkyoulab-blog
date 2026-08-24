@@ -48,17 +48,17 @@ export default async function KategoriDetail({ params }: Props) {
     .limit(24);
 
   return (
-    <main className="flex-1 bg-gray-50">
+    <main className="flex-1 bg-gray-50 dark:bg-gray-950">
       <div className="mx-auto max-w-5xl px-4 py-12 sm:py-16">
         <FadeIn>
           <span className="rounded-full bg-red-100 px-4 py-1.5 text-sm font-medium text-red-700">
             {category.name}
           </span>
-          <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
             {category.description ? "Materi " + category.name : "Artikel kategori " + category.name}
           </h1>
           {category.description && (
-            <p className="mt-2 max-w-xl text-gray-600">{category.description}</p>
+            <p className="mt-2 max-w-xl text-gray-600 dark:text-gray-400">{category.description}</p>
           )}
           <p className="mt-3 text-sm text-gray-400">{items.length} artikel</p>
         </FadeIn>
@@ -66,10 +66,10 @@ export default async function KategoriDetail({ params }: Props) {
         <div className="mt-10">
           {items.length === 0 ? (
             <FadeIn>
-              <div className="rounded-2xl bg-white p-16 text-center shadow-sm">
+              <div className="rounded-2xl bg-white p-16 text-center shadow-sm dark:bg-gray-900">
                 <p className="text-4xl">🌱</p>
-                <h2 className="mt-4 font-semibold">Belum ada artikel di kategori ini</h2>
-                <p className="mt-1 text-sm text-gray-600">Cek kembali lain waktu.</p>
+                <h2 className="mt-4 font-semibold dark:text-white">Belum ada artikel di kategori ini</h2>
+                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Cek kembali lain waktu.</p>
               </div>
             </FadeIn>
           ) : (

@@ -19,7 +19,7 @@ export type PostCardData = {
 function Thumb({ url }: { url: string | null }) {
   if (!url) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-red-50 to-gray-100 text-4xl">
+      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-red-50 to-gray-100 text-4xl dark:from-red-500/10 dark:to-gray-800">
         🎌
       </div>
     );
@@ -36,7 +36,7 @@ export default function PostCard({ post }: { post: PostCardData }) {
     >
       <Link
         href={`/artikel/${post.slug}`}
-        className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 transition-shadow hover:shadow-lg"
+        className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 transition-shadow hover:shadow-lg dark:bg-gray-900 dark:ring-gray-800"
       >
         <div className="relative aspect-video overflow-hidden">
           <div className="h-full w-full transition-transform duration-500 group-hover:scale-105">
@@ -49,11 +49,13 @@ export default function PostCard({ post }: { post: PostCardData }) {
           )}
         </div>
         <div className="flex flex-1 flex-col p-5">
-          <h3 className="line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-red-600">
+          <h3 className="line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-red-600 dark:text-gray-100 dark:group-hover:text-red-400">
             {post.title}
           </h3>
           {post.excerpt && (
-            <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-600">{post.excerpt}</p>
+            <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+              {post.excerpt}
+            </p>
           )}
           <p className="mt-auto pt-4 text-xs text-gray-400">
             {post.publishedAt ? formatTanggal(post.publishedAt) : "—"} · {post.authorName ?? "Tim"}

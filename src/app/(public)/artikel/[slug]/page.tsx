@@ -115,7 +115,7 @@ export default async function ArtikelDetail({ params }: Props) {
           .limit(3);
 
   return (
-    <main className="flex-1 bg-white">
+    <main className="flex-1 bg-white dark:bg-gray-950">
       <ReadingProgress />
 
       <article className="mx-auto max-w-prose px-4 py-10 sm:py-14">
@@ -154,7 +154,7 @@ export default async function ArtikelDetail({ params }: Props) {
         </FadeIn>
 
         <FadeIn delay={0.1} y={12}>
-          <h1 className="mt-4 text-3xl leading-tight font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <h1 className="mt-4 text-3xl leading-tight font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
             {post.title}
           </h1>
           <p className="mt-4 text-sm text-gray-400">
@@ -171,29 +171,29 @@ export default async function ArtikelDetail({ params }: Props) {
 
         {/* Aman: HTML sudah disanitasi server-side saat simpan (lib/sanitize.ts) */}
         <div
-          className="prose prose-gray mt-10 max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:font-medium prose-a:text-red-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-blockquote:border-l-red-300 prose-blockquote:bg-red-50/50 prose-blockquote:py-1 prose-blockquote:italic"
+          className="prose prose-gray mt-10 max-w-none dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight prose-a:font-medium prose-a:text-red-600 prose-a:no-underline hover:prose-a:underline prose-img:rounded-2xl prose-blockquote:border-l-red-300 prose-blockquote:bg-red-50/50 prose-blockquote:py-1 prose-blockquote:italic dark:prose-blockquote:border-l-red-500/50 dark:prose-blockquote:bg-red-500/5"
           dangerouslySetInnerHTML={{ __html: post.contentHtml }}
         />
 
         <FadeIn>
-          <div className="mt-12 flex items-center gap-4 rounded-2xl bg-gray-50 p-6 ring-1 ring-gray-100">
+          <div className="mt-12 flex items-center gap-4 rounded-2xl bg-gray-50 p-6 ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-600 text-xl font-bold text-white">
               勉
             </span>
             <div>
-              <p className="text-sm font-semibold text-gray-900">{post.authorName}</p>
-              <p className="text-sm text-gray-600">Menulis materi bahasa Jepang untuk pemula di Benkyou Lab.</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">{post.authorName}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Menulis materi bahasa Jepang untuk pemula di Benkyou Lab.</p>
             </div>
           </div>
         </FadeIn>
       </article>
 
       {related.length > 0 && (
-        <section className="border-t border-gray-100 bg-gray-50 py-12">
+        <section className="border-t border-gray-100 bg-gray-50 py-12 dark:border-gray-800 dark:bg-gray-900/40">
           <div className="mx-auto max-w-5xl px-4">
             <FadeIn>
               <div className="flex items-end justify-between">
-                <h2 className="text-2xl font-bold tracking-tight text-gray-900">Artikel lainnya</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Artikel lainnya</h2>
                 <Link href="/kategori" className="text-sm font-medium text-red-600 hover:text-red-700">
                   Semua kategori →
                 </Link>

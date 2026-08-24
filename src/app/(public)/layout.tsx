@@ -11,7 +11,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
       {/* aksen kanji samar di pojok bawah kanan */}
       <span
         aria-hidden
-        className="pointer-events-none fixed right-1 bottom-1 z-0 hidden select-none text-8xl leading-none font-bold text-red-50/60 lg:block"
+        className="pointer-events-none fixed right-1 bottom-1 z-0 hidden select-none text-8xl leading-none font-bold text-red-50/60 lg:block dark:text-red-500/5"
       >
         勉
       </span>

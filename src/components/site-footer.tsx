@@ -11,10 +11,10 @@ const LINKS = [
 
 export default function SiteFooter() {
   return (
-    <footer className="relative mt-20 overflow-hidden border-t border-gray-100 bg-gray-50">
+    <footer className="relative mt-20 overflow-hidden border-t border-gray-100 bg-gray-50 dark:border-gray-800 dark:bg-gray-900/40">
       <span
         aria-hidden
-        className="pointer-events-none absolute -bottom-10 right-2 select-none text-[9rem] leading-none font-bold text-red-50"
+        className="pointer-events-none absolute -bottom-10 right-2 select-none text-[9rem] leading-none font-bold text-red-50 dark:text-red-500/5"
       >
         学
       </span>
@@ -31,11 +31,11 @@ export default function SiteFooter() {
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 font-bold text-white">
                 勉
               </span>
-              <span className="text-lg font-bold tracking-tight">
+              <span className="text-lg font-bold tracking-tight dark:text-white">
                 Benkyou<span className="text-red-600">Lab</span>
               </span>
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-gray-600">
+            <p className="mt-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400">
               日本語を学ぼう、未来を築く — belajar bahasa Jepang langkah demi langkah, dari huruf
               pertama sampai percaya diri mengobrol.
             </p>
@@ -49,7 +49,10 @@ export default function SiteFooter() {
               <ul className="mt-3 space-y-2 text-sm">
                 {LINKS.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="text-gray-600 transition-colors hover:text-red-600">
+                    <Link
+                      href={l.href}
+                      className="text-gray-600 transition-colors hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                    >
                       {l.label}
                     </Link>
                   </li>
@@ -62,12 +65,18 @@ export default function SiteFooter() {
               </p>
               <ul className="mt-3 space-y-2 text-sm">
                 <li>
-                  <Link href="/login" className="text-gray-600 transition-colors hover:text-red-600">
+                  <Link
+                    href="/login"
+                    className="text-gray-600 transition-colors hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                  >
                     Masuk dashboard
                   </Link>
                 </li>
                 <li>
-                  <Link href="/admin" className="text-gray-600 transition-colors hover:text-red-600">
+                  <Link
+                    href="/admin"
+                    className="text-gray-600 transition-colors hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                  >
                     Kelola artikel
                   </Link>
                 </li>
@@ -75,7 +84,7 @@ export default function SiteFooter() {
             </div>
           </div>
         </motion.div>
-        <p className="relative mt-10 border-t border-gray-200/70 pt-6 text-xs text-gray-400">
+        <p className="relative mt-10 border-t border-gray-200/70 pt-6 text-xs text-gray-400 dark:border-gray-800">
           © {new Date().getFullYear()} Benkyou Lab · Dibuat dengan 🍵 dan banyak kanji
         </p>
       </div>
