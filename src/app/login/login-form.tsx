@@ -4,12 +4,16 @@ import { useActionState } from "react";
 
 export default function LoginForm({
   action,
+  csrfToken,
 }: {
   action: (state: { error?: string }, fd: FormData) => Promise<{ error?: string }>;
+  csrfToken: string;
 }) {
   const [state, formAction, pending] = useActionState(action, {});
+
   return (
     <form action={formAction} className="space-y-4">
+      <input type="hidden" name="csrfToken" value={csrfToken} />
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-1.5">
           Email
@@ -20,10 +24,11 @@ export default function LoginForm({
           type="email"
           required
           autoComplete="email"
-          className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-100"
+          className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-100"
           placeholder="admin@benkyoulab.online"
         />
       </div>
+
       <div>
         <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-1.5">
           Password
@@ -34,15 +39,17 @@ export default function LoginForm({
           type="password"
           required
           autoComplete="current-password"
-          className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-gray-900 placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-100"
-          placeholder="••••••••"
+          className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:border-red-500 focus:outline-none focus:ring-4 focus:ring-red-100"
+          placeholder="password"
         />
       </div>
+
       {state.error && (
         <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
           {state.error}
         </p>
       )}
+
       <button
         type="submit"
         disabled={pending}

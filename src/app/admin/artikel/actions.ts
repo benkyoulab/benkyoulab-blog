@@ -98,12 +98,16 @@ export async function savePost(_prev: PostActionState, formData: FormData): Prom
   return {};
 }
 
-export async function deletePost(id: number): Promise<void> {
+// Delete via FormData — dipakai langsung sebagai `action` di <form>.
+// Return void (bukan state) supaya kompatibel dengan form action type React.
+export async function deletePostAction(fd: FormData): Promise<void> {
+  const id = Number(fd.get("id"));
+  if (Number.isNaN(id)) throw new Error("id tidak valid");
   const session = await requireUser();
   const [existing] = await db.select().from(posts).where(eq(posts.id, id)).limit(1);
-  if (!existing) return;
+  if (!existing) throw new Error("Artikel tidak ditemukan.");
   if (session.user.role !== "admin" && existing.authorId !== Number(session.user.id)) {
-    throw new Error("Bukan artikel milikmu");
+    throw new Error("Bukan artikel milikmu.");
   }
   await db.delete(posts).where(eq(posts.id, id));
   refreshPublic(existing.slug);

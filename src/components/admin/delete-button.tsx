@@ -1,14 +1,5 @@
 import { m } from "motion/react";
-import { deletePost } from "@/app/admin/artikel/actions";
-import type { PostActionState } from "@/app/admin/artikel/actions";
-
-// Wrapper server action: parse FormData -> id, lalu panggil deletePost.
-async function deletePostAction(_prev: PostActionState, fd: FormData): Promise<PostActionState> {
-  const id = Number(fd.get("id"));
-  if (Number.isNaN(id)) return { error: "id tidak valid" };
-  await deletePost(id);
-  return {};
-}
+import { deletePostAction } from "@/app/admin/artikel/actions";
 
 // Hapus artikel lewat server action + window.confirm.
 export default function DeleteButton({ id }: { id: number }) {

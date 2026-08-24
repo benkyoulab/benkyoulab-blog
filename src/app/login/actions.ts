@@ -7,18 +7,19 @@ export type LoginState = { error?: string };
 
 export async function loginAction(_prev: LoginState, formData: FormData): Promise<LoginState> {
   try {
-    // signIn melempar NEXT_REDIRECT saat sukses (via internal redirect) — itu wajar
-    // dan harus dibiarkan terbang keluar dari action. Hanya AuthError spesifik login
-    // yang boleh ditangkep dan ditampilkan ke user.
+    // signIn("credentials", {...}) otomatis POST ke /api/auth/callback/credentials
+    // termasuk csrfToken dari cookie. Tapi di App Router server action,
+    // csrfToken harus dikirim eksplisit via body (ada di formData dari hidden input).
+    const csrfToken = formData.get("csrfToken");
     await signIn("credentials", {
+      redirectTo: "/admin",
       email: formData.get("email"),
       password: formData.get("password"),
-      redirectTo: "/admin",
+      csrfToken: csrfToken ? csrfToken.toString() : undefined,
     });
     return {};
   } catch (err) {
-    // ponytail: NEXT_REDIRECT (sukses) & NOT_FOUND dll ditandai `digest` "NEXT_*";
-    // hanya CredentialsSignin (gagal login) yang ditampilkan ke user.
+    // Auth.js lempar NEXT_REDIRECT / REVALIDATE saat redirectTo (sukses) — jangan tangkep.
     const digest = (err as { digest?: string })?.digest;
     if (typeof digest === "string" && digest.startsWith("NEXT_")) throw err;
     if (err instanceof AuthError) return { error: "Email atau password salah." };
