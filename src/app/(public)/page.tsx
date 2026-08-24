@@ -4,12 +4,11 @@ import { db } from "@/db";
 import { posts, users, categories } from "@/db/schema";
 import PostCard from "@/components/post-card";
 import FadeIn from "@/components/fade-in";
+import KanjiFloat from "@/components/kanji-float";
 
 export const revalidate = 300;
 
 const PER_PAGE = 12;
-
-const KANJI_FLOAT = ["日", "語", "学", "文"];
 
 export default async function HomePage({
   searchParams,
@@ -61,65 +60,74 @@ export default async function HomePage({
           日本語
         </span>
         <div className="mx-auto max-w-5xl px-4 pt-16 pb-12 sm:pt-24 sm:pb-16">
-          <FadeIn>
-            <p className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-1.5 text-sm font-semibold text-red-600 dark:bg-red-500/10 dark:text-red-400">
-              <span>🎌</span> ブログ · Blog Belajar Bahasa Jepang
-            </p>
-          </FadeIn>
-          <FadeIn delay={0.08}>
-            <h1 className="mt-5 max-w-2xl text-4xl leading-tight font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
-              Belajar bahasa Jepang,{" "}
-              <span className="relative inline-block text-red-600">
-                langkah demi langkah
-                <svg
-                  aria-hidden
-                  viewBox="0 0 220 10"
-                  className="absolute -bottom-1 left-0 w-full text-red-200 dark:text-red-500/30"
-                  fill="none"
-                >
-                  <path d="M2 8C60 2 160 2 218 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-                </svg>
-              </span>
-            </h1>
-          </FadeIn>
-          <FadeIn delay={0.16}>
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">
-              Materi kanji, tata bahasa, kosakata, dan tips belajar — ditulis ringkas, praktis, dan
-              gratis. Mulai dari artikel terbaru di bawah.
-            </p>
-          </FadeIn>
-          <FadeIn delay={0.24}>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="#artikel"
-                className="rounded-full bg-red-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-95"
-              >
-                Mulai Baca ↓
-              </Link>
-              <Link
-                href="/kategori"
-                className="rounded-full border border-gray-200 bg-white px-6 py-3 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
-              >
-                Lihat Kategori
-              </Link>
-            </div>
-          </FadeIn>
-
-          {/* statistik */}
-          <FadeIn delay={0.32}>
-            <dl className="mt-12 grid max-w-md grid-cols-3 gap-4">
-              {[
-                { n: total, label: "artikel" },
-                { n: catRows.length, label: "kategori" },
-                { n: "100%", label: "gratis" },
-              ].map((s) => (
-                <div key={s.label} className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
-                  <dt className="order-2 text-xs text-gray-500 dark:text-gray-400">{s.label}</dt>
-                  <dd className="text-2xl font-bold text-gray-900 dark:text-white">{s.n}</dd>
+          <div className="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
+            <div>
+              <FadeIn>
+                <p className="inline-flex items-center gap-2 rounded-full bg-red-50 px-4 py-1.5 text-sm font-semibold text-red-600 dark:bg-red-500/10 dark:text-red-400">
+                  <span>🎌</span> ブログ · Blog Belajar Bahasa Jepang
+                </p>
+              </FadeIn>
+              <FadeIn delay={0.08}>
+                <h1 className="mt-5 text-4xl leading-tight font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
+                  Belajar bahasa Jepang,{" "}
+                  <span className="relative inline-block text-red-600">
+                    langkah demi langkah
+                    <svg
+                      aria-hidden
+                      viewBox="0 0 220 10"
+                      className="absolute -bottom-1 left-0 w-full text-red-200 dark:text-red-500/30"
+                      fill="none"
+                    >
+                      <path d="M2 8C60 2 160 2 218 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                    </svg>
+                  </span>
+                </h1>
+              </FadeIn>
+              <FadeIn delay={0.16}>
+                <p className="mt-5 max-w-xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">
+                  Materi kanji, tata bahasa, kosakata, dan tips belajar — ditulis ringkas, praktis,
+                  dan gratis. Mulai dari artikel terbaru di bawah.
+                </p>
+              </FadeIn>
+              <FadeIn delay={0.24}>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <Link
+                    href="#artikel"
+                    className="rounded-full bg-red-600 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-95"
+                  >
+                    Mulai Baca ↓
+                  </Link>
+                  <Link
+                    href="/kategori"
+                    className="rounded-full border border-gray-200 bg-white px-6 py-3 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800"
+                  >
+                    Lihat Kategori
+                  </Link>
                 </div>
-              ))}
-            </dl>
-          </FadeIn>
+              </FadeIn>
+
+              {/* statistik */}
+              <FadeIn delay={0.32}>
+                <dl className="mt-12 grid max-w-md grid-cols-3 gap-4">
+                  {[
+                    { n: total, label: "artikel" },
+                    { n: catRows.length, label: "kategori" },
+                    { n: "100%", label: "gratis" },
+                  ].map((s) => (
+                    <div key={s.label} className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
+                      <dt className="order-2 text-xs text-gray-500 dark:text-gray-400">{s.label}</dt>
+                      <dd className="text-2xl font-bold text-gray-900 dark:text-white">{s.n}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </FadeIn>
+            </div>
+
+            {/* dekorasi kanji mengambang (desktop) */}
+            <div className="hidden lg:block">
+              <KanjiFloat />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -152,13 +160,7 @@ export default async function HomePage({
               <div className="rounded-2xl bg-white p-16 text-center shadow-sm dark:bg-gray-900">
                 <p className="text-4xl">🌸</p>
                 <h2 className="mt-4 text-xl font-semibold dark:text-white">Belum ada artikel</h2>
-                <p className="mt-1 text-gray-600 dark:text-gray-400">
-                  Publish artikel pertama dari{" "}
-                  <Link href="/admin" className="text-red-600 hover:underline">
-                    dashboard admin
-                  </Link>
-                  .
-                </p>
+                <p className="mt-1 text-gray-600 dark:text-gray-400">Segera hadir — nantikan materi pertamanya.</p>
               </div>
             </FadeIn>
           ) : (

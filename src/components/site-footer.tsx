@@ -9,9 +9,10 @@ const LINKS = [
   { href: "/tentang", label: "Tentang" },
 ];
 
+// Catatan: sengaja tidak ada link login/admin di sini — akses penulis hanya via URL langsung /login.
 export default function SiteFooter() {
   return (
-    <footer className="relative mt-20 overflow-hidden border-t border-gray-100 bg-gray-50 dark:border-gray-800 dark:bg-gray-900/40">
+    <footer className="relative mt-20 overflow-hidden border-t border-gray-100 bg-gray-50 dark:border-gray-800 dark:bg-gray-950">
       <span
         aria-hidden
         className="pointer-events-none absolute -bottom-10 right-2 select-none text-[9rem] leading-none font-bold text-red-50 dark:text-red-500/5"
@@ -41,47 +42,22 @@ export default function SiteFooter() {
             </p>
           </div>
 
-          <div className="flex gap-14">
-            <div>
-              <p className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
-                Jelajahi
-              </p>
-              <ul className="mt-3 space-y-2 text-sm">
-                {LINKS.map((l) => (
-                  <li key={l.href}>
-                    <Link
-                      href={l.href}
-                      className="text-gray-600 transition-colors hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
-                    >
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
-                Untuk Penulis
-              </p>
-              <ul className="mt-3 space-y-2 text-sm">
-                <li>
+          <div>
+            <p className="text-xs font-semibold tracking-wider text-gray-400 uppercase">
+              Jelajahi
+            </p>
+            <ul className="mt-3 space-y-2 text-sm">
+              {LINKS.map((l) => (
+                <li key={l.href}>
                   <Link
-                    href="/login"
+                    href={l.href}
                     className="text-gray-600 transition-colors hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
                   >
-                    Masuk dashboard
+                    {l.label}
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href="/admin"
-                    className="text-gray-600 transition-colors hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
-                  >
-                    Kelola artikel
-                  </Link>
-                </li>
-              </ul>
-            </div>
+              ))}
+            </ul>
           </div>
         </motion.div>
         <p className="relative mt-10 border-t border-gray-200/70 pt-6 text-xs text-gray-400 dark:border-gray-800">

@@ -74,12 +74,6 @@ export default function SiteHeader() {
             </Link>
           ))}
           <ThemeToggle />
-          <Link
-            href="/admin"
-            className="ml-1 rounded-full bg-red-600 px-5 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-95"
-          >
-            Tulis ✍️
-          </Link>
         </nav>
 
         {/* tombol hamburger mobile */}
@@ -120,7 +114,7 @@ export default function SiteHeader() {
             className="overflow-hidden border-t border-gray-100 bg-white/95 backdrop-blur md:hidden dark:border-gray-800 dark:bg-gray-950/95"
           >
             <div className="space-y-1 px-4 py-3">
-              {[...NAV, { href: "/admin", label: "Tulis ✍️" }].map((item) => (
+              {NAV.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
