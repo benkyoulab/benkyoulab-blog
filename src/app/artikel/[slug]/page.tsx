@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { posts, users, categories } from "@/db/schema";
 import { auth } from "@/auth";
 import PostCard from "@/components/post-card";
+import SafeImg from "@/components/safe-img";
 import { formatTanggal } from "@/lib/format-date";
 
 // ponytail: sengaja TIDAK pakai revalidate/ISR — halaman ini membaca sesi utk preview draft;
@@ -136,8 +137,11 @@ export default async function ArtikelDetail({ params }: Props) {
         </p>
 
         {post.thumbnailUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={post.thumbnailUrl} alt={post.title} className="mt-6 w-full rounded-2xl" />
+          <SafeImg
+            src={post.thumbnailUrl}
+            alt={post.title}
+            className="mt-6 w-full rounded-2xl"
+          />
         )}
 
         {/* Aman: HTML sudah disanitasi server-side saat simpan (lib/sanitize.ts) */}

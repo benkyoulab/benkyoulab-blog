@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SafeImg from "@/components/safe-img";
 import { formatTanggal } from "@/lib/format-date";
 
 export type PostCardData = {
@@ -11,8 +12,7 @@ export type PostCardData = {
   categoryName: string | null;
 };
 
-// ponytail: <img> + loading lazy, bukan next/image — host eksternal bebas tanpa daftar domain.
-// Gambar rusak baru ditangani di Fase 6 (butuh komponen client kecil).
+// ponytail: <img> biasa + fallback client via SafeImg — next/image butuh daftar domain host eksternal.
 function Thumb({ url }: { url: string | null }) {
   if (!url) {
     return (
@@ -21,10 +21,7 @@ function Thumb({ url }: { url: string | null }) {
       </div>
     );
   }
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={url} alt="" loading="lazy" className="h-full w-full object-cover" />
-  );
+  return <SafeImg src={url} alt="" className="h-full w-full object-cover" />;
 }
 
 export default function PostCard({ post }: { post: PostCardData }) {
