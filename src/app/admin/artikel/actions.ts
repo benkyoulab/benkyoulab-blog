@@ -13,7 +13,7 @@ export type PostActionState = { error?: string };
 
 async function requireUser() {
   const session = await auth();
-  if (!session?.user) throw new Error("Harus login");
+  if (!session?.user?.id) throw new Error("Harus login");
   return session;
 }
 

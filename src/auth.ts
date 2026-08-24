@@ -35,7 +35,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
     session({ session, token }) {
-      if (session.user) session.user.role = token.role as "admin" | "writer" | undefined;
+      if (session.user) {
+        session.user.id = token.sub as string;  // pastikan author_id selalu valid di seluruh server action
+        session.user.role = token.role as "admin" | "writer" | undefined;
+      }
       return session;
     },
   },
