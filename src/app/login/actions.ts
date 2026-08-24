@@ -7,21 +7,18 @@ export type LoginState = { error?: string };
 
 export async function loginAction(_prev: LoginState, formData: FormData): Promise<LoginState> {
   try {
-    // signIn("credentials", {...}) otomatis POST ke /api/auth/callback/credentials
-    // termasuk csrfToken dari cookie. Tapi di App Router server action,
-    // csrfToken harus dikirim eksplisit via body (ada di formData dari hidden input).
-    const csrfToken = formData.get("csrfToken");
+    // Auth.js Credentials provider — signIn server function otomatis handle CSRF
+    // lewat cookie header yang sama request. Cukup kirim email+password.
     await signIn("credentials", {
       redirectTo: "/admin",
       email: formData.get("email"),
       password: formData.get("password"),
-      csrfToken: csrfToken ? csrfToken.toString() : undefined,
     });
     return {};
   } catch (err) {
-    // Auth.js lempar NEXT_REDIRECT / REVALIDATE saat redirectTo (sukses) — jangan tangkep.
+    // Auth.js lempar redirect error (sukses) — jangan tangkep sebagai error login.
     const digest = (err as { digest?: string })?.digest;
-    if (typeof digest === "string" && digest.startsWith("NEXT_")) throw err;
+    if (typeof digest === "string" && /^NEXT_/.test(digest)) throw err;
     if (err instanceof AuthError) return { error: "Email atau password salah." };
     throw err;
   }

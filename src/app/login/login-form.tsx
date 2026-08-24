@@ -2,18 +2,13 @@
 
 import { useActionState } from "react";
 
-export default function LoginForm({
-  action,
-  csrfToken,
-}: {
+export default function LoginForm({ action }: {
   action: (state: { error?: string }, fd: FormData) => Promise<{ error?: string }>;
-  csrfToken: string;
 }) {
   const [state, formAction, pending] = useActionState(action, {});
 
   return (
     <form action={formAction} className="space-y-4">
-      <input type="hidden" name="csrfToken" value={csrfToken} />
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-1.5">
           Email
