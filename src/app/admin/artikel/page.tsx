@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { posts, users, categories } from "@/db/schema";
 import { auth } from "@/auth";
+import DeleteButton from "@/components/admin/delete-button";
 
 export const metadata = { title: "Artikel" };
 
@@ -51,7 +52,7 @@ export default async function ArtikelListPage() {
               <th className="px-4 py-3 font-medium">Judul</th>
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="hidden px-4 py-3 font-medium md:table-cell">Kategori</th>
-              {!isAdmin && <th className="px-4 py-3" />}
+              {isAdmin && <th className="px-4 py-3 text-center font-medium">Aksi</th>}
             </tr>
           </thead>
           <tbody>
@@ -68,9 +69,12 @@ export default async function ArtikelListPage() {
                 </td>
                 <td className="hidden px-4 py-3 text-gray-500 md:table-cell">{p.category ?? "—"}</td>
                 <td className="px-4 py-3 text-right">
-                  <Link href={`/admin/artikel/${p.id}/edit`} className="text-red-600 hover:underline">
-                    Edit
-                  </Link>
+                  <div className="flex items-center justify-end gap-3">
+                    <Link href={`/admin/artikel/${p.id}/edit`} className="text-red-600 hover:underline">
+                      Edit
+                    </Link>
+                    {isAdmin && <DeleteButton id={p.id} />}
+                  </div>
                 </td>
               </tr>
             ))}
