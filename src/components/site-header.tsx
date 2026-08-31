@@ -17,15 +17,14 @@ export default function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
+    useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // tutup menu mobile tiap pindah halaman
-  useEffect(() => setOpen(false), [pathname]);
+  const closeMenu = () => setOpen(false);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -57,6 +56,7 @@ export default function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={closeMenu}
               className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 isActive(item.href)
                   ? "text-red-600 dark:text-red-400"
@@ -118,6 +118,7 @@ export default function SiteHeader() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={closeMenu}
                   className={`block rounded-xl px-4 py-2.5 text-sm font-medium ${
                     isActive(item.href)
                       ? "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400"

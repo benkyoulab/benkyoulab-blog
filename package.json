@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack",
+    "build": "node scripts/build-safe.mjs",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx scripts/test-production.ts"
   },
   "dependencies": {
     "@tiptap/extension-image": "^3.30.2",

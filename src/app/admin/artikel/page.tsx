@@ -78,7 +78,7 @@ export default async function ArtikelListPage() {
             {!rows.length && (
               <tr>
                 <td colSpan={4} className="px-4 py-10 text-center text-gray-400">
-                  Belum ada artikel. Klik "+ Artikel Baru" untuk mulai menulis.
+                  Belum ada artikel. Klik &quot;+ Artikel Baru&quot; untuk mulai menulis.
                 </td>
               </tr>
             )}

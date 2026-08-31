@@ -1,15 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // Toggle tema: manual + persist. Default pertama kali mengikuti preferensi sistem
 // (sudah diterapkan oleh theme-init.ts sebelum paint).
 export default function ThemeToggle() {
-  const [dark, setDark] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
-  }, []);
+  const [dark, setDark] = useState<boolean>(() => {
+    if (typeof document === "undefined") return false;
+    return document.documentElement.classList.contains("dark");
+  });
 
   function toggle() {
     const next = !dark;
@@ -19,9 +18,6 @@ export default function ThemeToggle() {
       localStorage.setItem("theme", next ? "dark" : "light");
     } catch {}
   }
-
-  // Hindari hydration mismatch & ikon salah sebelum mount.
-  if (dark === null) return <span className="h-10 w-10" aria-hidden />;
 
   return (
     <button

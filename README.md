@@ -70,6 +70,12 @@ src/
 2. Set environment variables (lihat Setup Lokal #3) — **password harus URL-encoded `=` jadi `%3D`, `@` jadi `%40`**
 3. Push ke `main` → deploy otomatis
 
+> ⚠️ Pada Windows / drive exFAT, `next build` dapat gagal karena problem filesystem junction/readlink. Gunakan `npm run build` yang sekarang memakai script aman di `scripts/build-safe.mjs` untuk bypass issue lokal. Build final tetap disarankan dijalankan di Vercel/Linux.
+
+## SOP Operasional
+- [docs/05-operasional-sop.md](docs/05-operasional-sop.md) — deploy, rollback, backup, dan recovery
+- [docs/production-checklist.md](docs/production-checklist.md) — checklist kesiapan produksi
+
 ## Akses Admin
 URL langsung (tidak ada link dari halaman publik):
 - Login: `https://benkyoulab-blog.vercel.app/login`
