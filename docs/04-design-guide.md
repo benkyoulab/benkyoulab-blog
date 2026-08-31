@@ -71,6 +71,13 @@ bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition
 - Autoplay berjalan pelan setiap 6,5 detik dan selalu memiliki kontrol indikator yang dapat diklik.
 - Carousel adalah highlight editorial, bukan pengganti daftar artikel terbaru di bawahnya.
 
+### Search, Filter, dan Sort (beranda)
+- Gunakan form GET agar pencarian dapat dibookmark dan dibagikan, dengan parameter `q`, `category`, dan `sort`.
+- Search mencakup judul, excerpt, dan isi teks artikel; filter rubrik memakai slug kategori.
+- Urutan yang tersedia: terbaru, terlama, dan judul A-Z.
+- Pagination harus mempertahankan semua parameter aktif.
+- Empty state menjelaskan bahwa hasil tidak ditemukan dan menyediakan aksi untuk menghapus filter.
+
 ### Halaman Artikel
 - Container baca `max-w-prose mx-auto px-4`.
 - Header artikel: chip kategori, H1, meta (penulis · tanggal · waktu baca opsional), thumbnail full-width `rounded-2xl`.

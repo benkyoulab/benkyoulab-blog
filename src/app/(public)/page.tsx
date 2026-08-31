@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { posts, users, categories } from "@/db/schema";
 import PostCard from "@/components/post-card";
@@ -12,12 +12,35 @@ export const dynamic = "force-dynamic";
 const PER_PAGE = 12;
 
 type Props = {
-  searchParams: Promise<{ page?: string | string[] }>;
+  searchParams: Promise<{
+    page?: string | string[];
+    q?: string | string[];
+    category?: string | string[];
+    sort?: string | string[];
+  }>;
 };
 
 export default async function HomePage({ searchParams }: Props) {
-  const { page: pageParam } = await searchParams;
+  const params = await searchParams;
+  const pageParam = Array.isArray(params.page) ? params.page[0] : params.page;
+  const query = (Array.isArray(params.q) ? params.q[0] : params.q)?.trim() ?? "";
+  const category = Array.isArray(params.category) ? params.category[0] : params.category;
+  const sort = Array.isArray(params.sort) ? params.sort[0] : params.sort;
   const page = Math.max(1, Number(pageParam) || 1);
+
+  const filters = [eq(posts.status, "published")];
+  if (query) {
+    filters.push(
+      or(
+        ilike(posts.title, `%${query}%`),
+        ilike(posts.excerpt, `%${query}%`),
+        ilike(posts.contentText, `%${query}%`),
+      )!,
+    );
+  }
+  if (category) filters.push(eq(categories.slug, category));
+
+  const orderBy = sort === "oldest" ? asc(posts.publishedAt) : sort === "title" ? asc(posts.title) : desc(posts.publishedAt);
 
   const [rows, catRows, [{ total }]] = await Promise.all([
     db
@@ -33,8 +56,8 @@ export default async function HomePage({ searchParams }: Props) {
       .from(posts)
       .innerJoin(users, eq(posts.authorId, users.id))
       .leftJoin(categories, eq(posts.categoryId, categories.id))
-      .where(eq(posts.status, "published"))
-      .orderBy(desc(posts.publishedAt))
+      .where(and(...filters))
+      .orderBy(orderBy)
       .limit(PER_PAGE + 1)
       .offset((page - 1) * PER_PAGE),
     db
@@ -46,11 +69,22 @@ export default async function HomePage({ searchParams }: Props) {
     db
       .select({ total: sql<number>`count(*)::int` })
       .from(posts)
-      .where(eq(posts.status, "published")),
+        .where(and(...filters)),
   ]);
 
   const hasMore = rows.length > PER_PAGE;
   const items = rows.slice(0, PER_PAGE);
+  const hasFilters = Boolean(query || category || sort === "oldest" || sort === "title");
+
+  function pageHref(nextPage: number) {
+    const next = new URLSearchParams();
+    if (nextPage > 1) next.set("page", String(nextPage));
+    if (query) next.set("q", query);
+    if (category) next.set("category", category);
+    if (sort) next.set("sort", sort);
+    const value = next.toString();
+    return value ? `/?${value}` : "/";
+  }
 
   return (
     <main className="flex-1 bg-[#f7f5f0] dark:bg-[#171816]">
@@ -158,12 +192,39 @@ export default async function HomePage({ searchParams }: Props) {
       {/* DAFTAR ARTIKEL */}
       <section id="artikel" className="bg-[#eeece6] py-16 dark:bg-[#1d1e1b]">
         <div className="mx-auto max-w-6xl px-4">
+          <FadeIn>
+            <form method="get" className="mb-10 grid gap-3 border-y border-[#d8d2c7] py-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] dark:border-[#3b3c37]">
+              <label className="sr-only" htmlFor="search">Cari artikel</label>
+              <input
+                id="search"
+                name="q"
+                type="search"
+                defaultValue={query}
+                placeholder="Cari berita, JLPT, MEXT, budaya..."
+                className="min-w-0 border-b border-[#bdb7ac] bg-transparent px-0 py-2 text-sm text-[#20211f] outline-none placeholder:text-gray-500 focus:border-[#c83c2d] dark:border-[#4a4b45] dark:text-white"
+              />
+              <label className="sr-only" htmlFor="category">Filter rubrik</label>
+              <select id="category" name="category" defaultValue={category ?? ""} className="border-b border-[#bdb7ac] bg-transparent px-0 py-2 text-sm text-[#20211f] outline-none focus:border-[#c83c2d] dark:border-[#4a4b45] dark:bg-[#1d1e1b] dark:text-white">
+                <option value="">Semua rubrik</option>
+                {catRows.map((cat) => <option key={cat.slug} value={cat.slug}>{cat.name}</option>)}
+              </select>
+              <label className="sr-only" htmlFor="sort">Urutkan artikel</label>
+              <select id="sort" name="sort" defaultValue={sort ?? "latest"} className="border-b border-[#bdb7ac] bg-transparent px-0 py-2 text-sm text-[#20211f] outline-none focus:border-[#c83c2d] dark:border-[#4a4b45] dark:bg-[#1d1e1b] dark:text-white">
+                <option value="latest">Terbaru</option>
+                <option value="oldest">Terlama</option>
+                <option value="title">Judul A-Z</option>
+              </select>
+              <button type="submit" className="bg-[#c83c2d] px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-[#a92f24]">Terapkan</button>
+            </form>
+          </FadeIn>
+
           {items.length === 0 ? (
             <FadeIn>
               <div className="rounded-2xl bg-white p-16 text-center shadow-sm dark:bg-gray-900">
-                <p className="text-4xl">🌸</p>
-                <h2 className="mt-4 text-xl font-semibold dark:text-white">Belum ada artikel</h2>
-                <p className="mt-1 text-gray-600 dark:text-gray-400">Segera hadir — nantikan materi pertamanya.</p>
+                <p className="font-display text-5xl text-[#c83c2d]/70">検索</p>
+                <h2 className="mt-4 text-xl font-semibold dark:text-white">Tidak ada artikel yang cocok</h2>
+                <p className="mt-1 text-gray-600 dark:text-gray-400">Coba kata kunci atau rubrik yang berbeda.</p>
+                {hasFilters && <Link href="/#artikel" className="mt-5 inline-block text-sm font-bold text-[#c83c2d] hover:underline">Hapus semua filter</Link>}
               </div>
             </FadeIn>
           ) : (
@@ -186,7 +247,7 @@ export default async function HomePage({ searchParams }: Props) {
                 <nav className="mt-10 flex items-center justify-center gap-3">
                   {page > 1 && (
                     <Link
-                      href={page === 2 ? "/" : `/?page=${page - 1}`}
+                      href={pageHref(page - 1)}
                       className="rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
                     >
                       ← Sebelumnya
@@ -194,7 +255,7 @@ export default async function HomePage({ searchParams }: Props) {
                   )}
                   {hasMore && (
                     <Link
-                      href={`/?page=${page + 1}`}
+                      href={pageHref(page + 1)}
                       className="rounded-full bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
                     >
                       Berikutnya →
