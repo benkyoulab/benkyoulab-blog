@@ -95,11 +95,11 @@ Selang-seling: `bg-white` → `bg-gray-50`. Judul section pola situs referensi: 
 
 | Halaman | Penerapan token |
 |---|---|
-| Beranda `/` | Hero ringkas (H1 + subtext + aksen kanji samar), grid Post Card 3 kolom (`md:grid-cols-3 gap-6`), pagination pill |
+| Beranda `/` | Hero editorial (kabar Jepang + rubrik), grid Post Card 3 kolom (`md:grid-cols-3 gap-6`), pagination sederhana |
 | Detail `/artikel/[slug]` | Pola "Halaman Artikel" §2, section terkait `bg-gray-50` |
-| Kategori `/kategori/[slug]` | Header kategori dengan chip besar `bg-red-100`, grid Post Card |
+| Kategori `/kategori/[slug]` | Hub rubrik seperti Berita Jepang, JLPT, MEXT, Budaya, dan Bahasa; grid Post Card |
 | Login `/login` | Kartu tunggal putih center `rounded-2xl shadow-md`, logo, input `rounded-xl border-gray-200 focus:border-red-500 focus:ring-red-100` |
-| Admin | Bebas lebih fungsional, tapi tetap Inter + primary red-600 + radius pill/kartu agar konsisten |
+| Admin | Bebas lebih fungsional, tapi tetap DM Sans + vermilion + radius ringan agar konsisten |
 
 ## 4. Aturan Main (do / don't)
 

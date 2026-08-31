@@ -9,11 +9,11 @@ const notoSerifJp = Noto_Serif_JP({ subsets: ["latin"], variable: "--font-noto-s
 
 export const metadata: Metadata = {
   title: {
-    default: "Benkyou Lab — Belajar Bahasa Jepang",
+    default: "Benkyou Lab — Kabar dan Cerita dari Jepang",
     template: "%s — Benkyou Lab",
   },
   description:
-    "Materi belajar bahasa Jepang: kanji, tata bahasa, kosakata, dan tips latihan. 日本語を学ぼう。",
+    "Blog berbahasa Indonesia tentang kabar Jepang, JLPT, MEXT, beasiswa, budaya, dan bahasa sehari-hari.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

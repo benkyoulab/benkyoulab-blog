@@ -68,14 +68,14 @@ export default async function HomePage({ searchParams }: Props) {
               <FadeIn>
                 <p className="inline-flex items-center gap-3 text-xs font-bold tracking-[0.14em] text-[#c83c2d] uppercase dark:text-red-400">
                   <span className="h-px w-8 bg-[#c83c2d]" />
-                  ブログ · Blog Belajar Bahasa Jepang
+                  ブログ · Catatan dari Jepang
                 </p>
               </FadeIn>
               <FadeIn delay={0.08}>
                 <h1 className="mt-5 max-w-2xl text-4xl leading-[1.08] font-bold tracking-[-0.04em] text-[#20211f] sm:text-6xl dark:text-white">
-                  Belajar bahasa Jepang,{" "}
+                  Mengikuti Jepang,{" "}
                   <span className="relative inline-block text-[#c83c2d]">
-                    langkah demi langkah
+                    satu cerita setiap waktu
                     <svg
                       aria-hidden
                       viewBox="0 0 220 10"
@@ -89,8 +89,8 @@ export default async function HomePage({ searchParams }: Props) {
               </FadeIn>
               <FadeIn delay={0.16}>
                 <p className="mt-6 max-w-xl text-[1.05rem] leading-relaxed text-[#5c5b55] dark:text-gray-400">
-                  Materi kanji, tata bahasa, kosakata, dan tips belajar — ditulis ringkas, praktis,
-                  dan gratis. Mulai dari artikel terbaru di bawah.
+                  Berita, panduan, dan cerita tentang Jepang — dari kabar terkini sampai JLPT,
+                  MEXT, budaya, dan bahasa sehari-hari. Ringkas, jernih, dan mudah diikuti.
                 </p>
               </FadeIn>
               <FadeIn delay={0.24}>
@@ -99,13 +99,13 @@ export default async function HomePage({ searchParams }: Props) {
                     href="#artikel"
                     className="bg-[#c83c2d] px-6 py-3 text-sm font-bold text-white shadow-sm transition-all hover:bg-[#a92f24] hover:shadow-md active:scale-95"
                   >
-                    Mulai Baca ↓
+                    Baca yang terbaru ↓
                   </Link>
                   <Link
                     href="/kategori"
                     className="border border-[#cfc9be] bg-transparent px-6 py-3 text-sm font-bold text-[#20211f] transition-colors hover:border-[#20211f] dark:border-gray-700 dark:text-gray-100 dark:hover:border-gray-300"
                   >
-                    Lihat Kategori
+                    Jelajahi rubrik
                   </Link>
                 </div>
               </FadeIn>
@@ -172,10 +172,10 @@ export default async function HomePage({ searchParams }: Props) {
               <FadeIn>
                 <div className="flex items-end justify-between gap-4">
                   <div>
-                    <p className="text-xs font-bold tracking-[0.14em] text-[#c83c2d] uppercase">Dari meja belajar</p>
-                    <h2 className="mt-2 text-3xl font-bold tracking-[-0.03em] text-[#20211f] dark:text-white">Artikel Terbaru</h2>
+                    <p className="text-xs font-bold tracking-[0.14em] text-[#c83c2d] uppercase">Edisi terbaru</p>
+                    <h2 className="mt-2 text-3xl font-bold tracking-[-0.03em] text-[#20211f] dark:text-white">Cerita dan kabar Jepang</h2>
                   </div>
-                  <span className="hidden text-sm text-gray-500 sm:block">Baca pelan-pelan, simpan yang penting.</span>
+                  <span className="hidden text-sm text-gray-500 sm:block">Yang baru, yang penting, yang layak diikuti.</span>
                 </div>
               </FadeIn>
               <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

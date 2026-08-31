@@ -5,24 +5,24 @@ import FadeIn from "@/components/fade-in";
 export const metadata: Metadata = {
   title: "Tentang — Benkyou Lab",
   description:
-    "Benkyou Lab adalah blog materi belajar bahasa Jepang: kanji, tata bahasa, kosakata, dan tips belajar.",
+    "Benkyou Lab adalah blog berbahasa Indonesia tentang kabar Jepang, JLPT, MEXT, budaya, dan bahasa.",
 };
 
 const NILAI = [
   {
     icon: "🧩",
-    title: "Pecah jadi kecil",
-    text: "Materi rumit disusun jadi langkah harian yang bisa diselesaikan 15–30 menit.",
+    title: "Jernih dan kontekstual",
+    text: "Informasi tentang Jepang disusun ringkas agar mudah dipahami dan tetap punya konteks.",
   },
   {
     icon: "🇯🇵",
-    title: "Konteks nyata",
-    text: "Contoh diambil dari situasi sehari-hari: konbini, restoran, kereta, dan percakapan asli.",
+    title: "Dekat dengan pembaca",
+    text: "Kami membahas berita, ujian, beasiswa, budaya, dan bahasa yang relevan untuk pembaca Indonesia.",
   },
   {
     icon: "🌱",
-    title: "Konsisten itu kunci",
-    text: "Sedikit tapi tiap hari mengalahkan maraton sekali sebulan. Kami rancang untuk kebiasaan.",
+    title: "Belajar tetap punya tempat",
+    text: "Rubrik bahasa membantu pembaca memahami Jepang lebih dalam, tanpa terasa seperti kelas online.",
   },
 ];
 
@@ -40,11 +40,11 @@ export default function Tentang() {
           <FadeIn>
             <p className="text-sm font-semibold text-red-600 uppercase">私たちについて</p>
             <h1 className="mt-2 max-w-2xl text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
-              Belajar Jepang tidak harus terasa seperti gunung
+              Jepang lebih dekat dari yang kita kira
             </h1>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-gray-600 dark:text-gray-400">
-              Benkyou Lab (勉強ラボ) adalah laboratorium belajar — tempat materi bahasa Jepang
-              dirancang ringkas, praktis, dan menyenangkan untuk pemula sampai menengah.
+              Benkyou Lab (勉強ラボ) adalah blog tentang Jepang dari sudut pandang pembaca Indonesia:
+              mengikuti kabar terkini, memahami konteks, dan menemukan hal-hal baru untuk dibaca.
             </p>
           </FadeIn>
         </div>
@@ -53,7 +53,7 @@ export default function Tentang() {
       <section className="border-y border-gray-100 bg-gray-50 py-14 dark:border-gray-800 dark:bg-gray-900/40">
         <div className="mx-auto max-w-5xl px-4">
           <FadeIn>
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Cara kami menulis</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Cara kami bercerita</h2>
           </FadeIn>
           <div className="mt-8 grid gap-6 sm:grid-cols-3">
             {NILAI.map((v, i) => (
@@ -82,7 +82,7 @@ export default function Tentang() {
               href="/"
               className="mt-8 inline-block rounded-full bg-red-600 px-7 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-red-700 hover:shadow-md active:scale-95"
             >
-              Mulai dari beranda
+              Baca edisi terbaru
             </Link>
           </FadeIn>
         </div>
