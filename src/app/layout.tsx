@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans, Noto_Serif_JP } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import MotionProvider from "@/components/motion-provider";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans", display: "swap" });
+const notoSerifJp = Noto_Serif_JP({ subsets: ["latin"], variable: "--font-noto-serif-jp", display: "swap" });
 
 export const metadata: Metadata = {
   title: {
@@ -17,11 +18,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="id" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="id" className={`${dmSans.variable} ${notoSerifJp.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <Script src="/theme-init.js" strategy="beforeInteractive" />
       </head>
-      <body className="min-h-full flex flex-col bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+      <body className="min-h-full flex flex-col bg-[#f7f5f0] text-[#20211f] dark:bg-[#171816] dark:text-[#f4f1e9]">
         <MotionProvider>{children}</MotionProvider>
       </body>
     </html>

@@ -4,9 +4,31 @@
 /* dark mode berbasis kelas .dark di <html> — dikendalikan tombol toggle + script anti-kedip */
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme inline {
+  --font-sans: var(--font-dm-sans), sans-serif;
+  --font-display: var(--font-noto-serif-jp), serif;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+.paper-grid {
+  background-color: #f7f5f0;
+  background-image: linear-gradient(rgba(32, 33, 31, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(32, 33, 31, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.dark .paper-grid {
+  background-color: #171816;
+  background-image: linear-gradient(rgba(244, 241, 233, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 241, 233, 0.035) 1px, transparent 1px);
+}
+
+.font-display {
+  font-family: var(--font-noto-serif-jp), serif;
 }
 
 ::selection {

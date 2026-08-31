@@ -40,12 +40,12 @@ export default function SiteHeader() {
           : "border-transparent bg-white/60 backdrop-blur dark:bg-gray-950/60"
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
+      <div className="mx-auto flex h-[4.5rem] max-w-6xl items-center justify-between px-4">
         <Link href="/" className="group flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-600 font-bold text-white shadow-sm transition-transform group-hover:-rotate-6">
+          <span className="font-display flex h-9 w-9 items-center justify-center border border-[#c83c2d] text-lg text-[#c83c2d] transition-transform group-hover:-rotate-6">
             勉
           </span>
-          <span className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+          <span className="text-[1.05rem] font-bold tracking-[-0.03em] text-[#20211f] dark:text-white">
             Benkyou<span className="text-red-600">Lab</span>
           </span>
         </Link>
@@ -57,7 +57,7 @@ export default function SiteHeader() {
               key={item.href}
               href={item.href}
               onClick={closeMenu}
-              className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                className={`relative px-4 py-2 text-sm font-medium transition-colors ${
                 isActive(item.href)
                   ? "text-red-600 dark:text-red-400"
                   : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
@@ -67,7 +67,7 @@ export default function SiteHeader() {
               {isActive(item.href) && (
                 <motion.span
                   layoutId="nav-pill"
-                  className="absolute inset-0 -z-10 rounded-full bg-red-50 dark:bg-red-500/10"
+                  className="absolute right-4 bottom-0 left-4 -z-10 h-px bg-red-600 dark:bg-red-400"
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 />
               )}

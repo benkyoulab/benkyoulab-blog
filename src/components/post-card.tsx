@@ -30,26 +30,26 @@ function Thumb({ url }: { url: string | null }) {
 export default function PostCard({ post }: { post: PostCardData }) {
   return (
     <m.div
-      whileHover={{ y: -6 }}
-      transition={{ type: "spring", stiffness: 300, damping: 22 }}
+      whileHover={{ y: -3 }}
+      transition={{ type: "spring", stiffness: 300, damping: 24 }}
       className="h-full"
     >
       <Link
         href={`/artikel/${post.slug}`}
-        className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 transition-shadow hover:shadow-lg dark:bg-gray-900 dark:ring-gray-800"
+        className="group flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-[0_1px_0_rgba(32,33,31,0.08)] ring-1 ring-[#e8e4db] transition-shadow hover:shadow-[0_12px_30px_rgba(32,33,31,0.1)] dark:bg-[#20211f] dark:ring-[#353631]"
       >
-        <div className="relative aspect-video overflow-hidden">
+        <div className="relative aspect-[4/3] overflow-hidden bg-[#ebe8df] dark:bg-[#2c2d29]">
           <div className="h-full w-full transition-transform duration-500 group-hover:scale-105">
             <Thumb url={post.thumbnailUrl} />
           </div>
           {post.categoryName && (
-            <span className="absolute top-3 left-3 rounded-full bg-red-600/90 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+            <span className="absolute top-3 left-3 bg-[#c83c2d] px-2.5 py-1 text-[0.68rem] font-bold tracking-[0.08em] text-white uppercase">
               {post.categoryName}
             </span>
           )}
         </div>
-        <div className="flex flex-1 flex-col p-5">
-          <h3 className="line-clamp-2 font-semibold text-gray-900 transition-colors group-hover:text-red-600 dark:text-gray-100 dark:group-hover:text-red-400">
+        <div className="flex flex-1 flex-col border-t-2 border-[#c83c2d] p-5">
+          <h3 className="line-clamp-2 text-[1.05rem] leading-snug font-bold text-[#20211f] transition-colors group-hover:text-[#c83c2d] dark:text-gray-100 dark:group-hover:text-red-400">
             {post.title}
           </h3>
           {post.excerpt && (

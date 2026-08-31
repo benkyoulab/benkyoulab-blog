@@ -1,7 +1,7 @@
 # Design Guide — Benkyou Lab Blog
 
-> Referensi visual: [benkyoulab.online](https://benkyoulab.online) — diambil langsung dari CSS produksi situs tersebut (bukan tebakan).
-> Tujuan: blog terasa satu brand dengan landing page utama.
+> Arah visual: editorial study journal — hangat seperti halaman catatan, terstruktur seperti majalah kecil, dengan aksen vermilion yang hemat.
+> Tujuan: blog terasa khas, tenang, mudah dipindai, dan tidak bergantung pada pola landing page generik.
 
 ---
 
@@ -29,8 +29,8 @@ Semua warna di bawah adalah **palette bawaan Tailwind** → tidak perlu custom t
 ### Tipografi
 | Elemen | Font | Catatan |
 |---|---|---|
-| UI + heading | **Inter** | Muat via `next/font/google`, variable `--font-inter`, `display: swap` |
-| Mono / aksen Jepang | `ui-monospace` stack | Untuk label dekoratif berbahasa Jepang |
+| UI + heading | **DM Sans** | Muat via `next/font/google`, variable `--font-dm-sans`, `display: swap` |
+| Display Jepang | **Noto Serif JP** | Untuk kanji dekoratif dan penanda editorial, variable `--font-noto-serif-jp` |
 
 Skala: H1 `text-4xl md:text-5xl font-bold tracking-tight` · H2 section `text-3xl font-bold` · judul card `text-lg font-semibold` · body `text-base leading-relaxed`.
 
@@ -47,7 +47,7 @@ Skala: H1 `text-4xl md:text-5xl font-bold tracking-tight` · H2 section `text-3x
 ## 2. Pola Komponen (dari situs referensi)
 
 ### Header
-Sticky putih semi-transparan + blur (`sticky top-0 bg-white/80 backdrop-blur`), border bawah tipis. Kiri: logo wordmark "BenkyouLab" (「勉強」 sebagai aksen opsional). Kanan: nav (Beranda, Kategori) + tombol pill primary.
+Sticky transparan dengan blur dan garis bawah aktif yang tipis. Kiri: logo wordmark "BenkyouLab" dengan aksen 勉. Kanan: nav sederhana yang aktif melalui underline, bukan pill.
 
 ### Post Card (beranda & arsip)
 ```
@@ -103,8 +103,8 @@ Selang-seling: `bg-white` → `bg-gray-50`. Judul section pola situs referensi: 
 
 ## 4. Aturan Main (do / don't)
 
-✅ Konsisten satu primary (red-600); putih dominan; abu untuk teks; radius besar; banyak whitespace.
-❌ Jangan campur warna primary kedua (ungu/biru hanya jika benar-benar perlu); jangan full-dark theme; jangan sudut tajam; jangan border tebal.
+✅ Gunakan kertas hangat (`#f7f5f0`), tinta gelap (`#20211f`), dan vermilion (`#c83c2d`) sebagai aksen; pakai garis, ritme whitespace, dan hierarki editorial.
+❌ Hindari kumpulan kartu mengambang, pill berulang, gradient dekoratif, dan ornamen yang mengambil perhatian dari judul artikel.
 
 ## 5. Implementasi Teknis Ringkas
 
@@ -113,9 +113,9 @@ Selang-seling: `bg-white` → `bg-gray-50`. Judul section pola situs referensi: 
 @import "tailwindcss";
 
 @theme inline {
-  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-sans: var(--font-dm-sans), sans-serif;
+  --font-display: var(--font-noto-serif-jp), serif;
 }
-/* Warna tidak perlu didaftarkan: semua token di atas = palette Tailwind standar */
 ```
 
 ```ts
