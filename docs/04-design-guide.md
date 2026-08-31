@@ -47,7 +47,7 @@ Skala: H1 `text-4xl md:text-5xl font-bold tracking-tight` · H2 section `text-3x
 ## 2. Pola Komponen (dari situs referensi)
 
 ### Header
-Sticky transparan dengan blur dan garis bawah aktif yang tipis. Kiri: logo wordmark "BenkyouLab" dengan aksen 勉. Kanan: nav sederhana yang aktif melalui underline, bukan pill.
+Sticky transparan dengan blur dan garis bawah aktif yang tipis. Desktop memiliki utility strip kecil untuk menegaskan bahwa situs adalah blog berita dan info Jepang. Kiri: logo wordmark "BenkyouLab" dengan aksen 勉 dan descriptor singkat. Kanan: nav Beranda, Terbaru, Rubrik, dan Tentang yang aktif melalui underline, bukan pill. Mobile memakai navigasi horizontal yang dapat di-scroll.
 
 ### Post Card (beranda & arsip)
 ```
