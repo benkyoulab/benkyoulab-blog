@@ -70,6 +70,7 @@ export default async function HomePage({ searchParams }: Props) {
     db
       .select({ total: sql<number>`count(*)::int` })
       .from(posts)
+      .leftJoin(categories, eq(posts.categoryId, categories.id))
         .where(and(...filters)),
   ]);
 
