@@ -5,6 +5,7 @@ import { posts, users, categories } from "@/db/schema";
 import PostCard from "@/components/post-card";
 import FadeIn from "@/components/fade-in";
 import FeaturedCarousel from "@/components/featured-carousel";
+import ArticleFilters from "@/components/article-filters";
 
 export const revalidate = 300;
 export const dynamic = "force-dynamic";
@@ -192,31 +193,7 @@ export default async function HomePage({ searchParams }: Props) {
       {/* DAFTAR ARTIKEL */}
       <section id="artikel" className="bg-[#eeece6] py-16 dark:bg-[#1d1e1b]">
         <div className="mx-auto max-w-6xl px-4">
-          <FadeIn>
-            <form method="get" className="mb-10 grid gap-3 border-y border-[#d8d2c7] py-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] dark:border-[#3b3c37]">
-              <label className="sr-only" htmlFor="search">Cari artikel</label>
-              <input
-                id="search"
-                name="q"
-                type="search"
-                defaultValue={query}
-                placeholder="Cari berita, JLPT, MEXT, budaya..."
-                className="min-w-0 border-b border-[#bdb7ac] bg-transparent px-0 py-2 text-sm text-[#20211f] outline-none placeholder:text-gray-500 focus:border-[#c83c2d] dark:border-[#4a4b45] dark:text-white"
-              />
-              <label className="sr-only" htmlFor="category">Filter rubrik</label>
-              <select id="category" name="category" defaultValue={category ?? ""} className="border-b border-[#bdb7ac] bg-transparent px-0 py-2 text-sm text-[#20211f] outline-none focus:border-[#c83c2d] dark:border-[#4a4b45] dark:bg-[#1d1e1b] dark:text-white">
-                <option value="">Semua rubrik</option>
-                {catRows.map((cat) => <option key={cat.slug} value={cat.slug}>{cat.name}</option>)}
-              </select>
-              <label className="sr-only" htmlFor="sort">Urutkan artikel</label>
-              <select id="sort" name="sort" defaultValue={sort ?? "latest"} className="border-b border-[#bdb7ac] bg-transparent px-0 py-2 text-sm text-[#20211f] outline-none focus:border-[#c83c2d] dark:border-[#4a4b45] dark:bg-[#1d1e1b] dark:text-white">
-                <option value="latest">Terbaru</option>
-                <option value="oldest">Terlama</option>
-                <option value="title">Judul A-Z</option>
-              </select>
-              <button type="submit" className="bg-[#c83c2d] px-5 py-2 text-sm font-bold text-white transition-colors hover:bg-[#a92f24]">Terapkan</button>
-            </form>
-          </FadeIn>
+          <ArticleFilters query={query} category={category ?? ""} sort={sort ?? "latest"} categories={catRows} />
 
           {items.length === 0 ? (
             <FadeIn>

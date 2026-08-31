@@ -77,6 +77,7 @@ bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition
 - Urutan yang tersedia: terbaru, terlama, dan judul A-Z.
 - Pagination harus mempertahankan semua parameter aktif.
 - Empty state menjelaskan bahwa hasil tidak ditemukan dan menyediakan aksi untuk menghapus filter.
+- Search diperbarui realtime dengan debounce 350 ms; perubahan rubrik dan urutan langsung memperbarui URL serta hasil.
 
 ### Halaman Artikel
 - Container baca `max-w-prose mx-auto px-4`.
