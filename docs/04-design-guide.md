@@ -64,6 +64,13 @@ Sticky transparan dengan blur dan garis bawah aktif yang tipis. Kiri: logo wordm
 bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition
 ```
 
+### Featured Carousel (beranda)
+- Hero menampilkan maksimal tiga artikel published terbaru sebagai cover story.
+- Gambar berasal dari `thumbnailUrl`; jika kosong, gunakan panel tipografi Jepang sebagai fallback.
+- Headline, kategori, dan tanggal harus tetap terbaca di atas overlay gambar.
+- Autoplay berjalan pelan setiap 6,5 detik dan selalu memiliki kontrol indikator yang dapat diklik.
+- Carousel adalah highlight editorial, bukan pengganti daftar artikel terbaru di bawahnya.
+
 ### Halaman Artikel
 - Container baca `max-w-prose mx-auto px-4`.
 - Header artikel: chip kategori, H1, meta (penulis · tanggal · waktu baca opsional), thumbnail full-width `rounded-2xl`.

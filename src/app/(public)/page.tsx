@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { posts, users, categories } from "@/db/schema";
 import PostCard from "@/components/post-card";
 import FadeIn from "@/components/fade-in";
-import KanjiFloat from "@/components/kanji-float";
+import FeaturedCarousel from "@/components/featured-carousel";
 
 export const revalidate = 300;
 export const dynamic = "force-dynamic";
@@ -127,10 +127,9 @@ export default async function HomePage({ searchParams }: Props) {
               </FadeIn>
             </div>
 
-            {/* dekorasi kanji mengambang (desktop) */}
-            <div className="hidden lg:block">
-              <KanjiFloat />
-            </div>
+            <FadeIn delay={0.2}>
+              <FeaturedCarousel articles={page === 1 ? items.slice(0, 3) : []} />
+            </FadeIn>
           </div>
         </div>
       </section>
