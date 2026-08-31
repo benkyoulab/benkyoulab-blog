@@ -2,14 +2,14 @@
 
 Status update: 2026-08-31
 
-Catatan: item yang membutuhkan akses ke GitHub, Vercel, atau Supabase tidak bisa dijalankan dari workspace lokal saat ini. Item yang bisa diverifikasi di repo dan runtime lokal sudah dihitung dan dicatat sesuai hasil terkini.
+Catatan: verifikasi lokal dan status deployment live sudah diperbarui berdasarkan hasil terakhir. Item yang memerlukan akses dashboard atau kredensial production tetap harus dikonfirmasi langsung di layanan terkait.
 
 ## 1. Infrastructure
-- [ ] GitHub repo aktif dan branch main stabil (blocked: butuh akses GitHub)
-- [ ] Vercel project terhubung ke repo GitHub (blocked: butuh akses Vercel)
-- [ ] Auto deploy dari main aktif (blocked: butuh akses Vercel)
-- [ ] Preview deployment aktif untuk pull request (blocked: butuh akses Vercel)
-- [x] Production URL dan preview URL terdokumentasi (README dan docs sudah mencatat flow deploy)
+- [x] GitHub repo aktif dan branch main stabil (`main` sudah tersinkron ke origin)
+- [x] Vercel project terhubung ke repo GitHub (deployment production sudah live)
+- [x] Auto deploy dari main aktif (perubahan `main` sudah berhasil dipush untuk deployment)
+- [ ] Preview deployment aktif untuk pull request (perlu konfirmasi di dashboard Vercel)
+- [x] Production URL terdokumentasi: https://benkyoulab-blog.vercel.app
 - [x] Rollback plan siap ([docs/05-operasional-sop.md](./05-operasional-sop.md))
 
 ## 2. Environment
@@ -69,6 +69,8 @@ Catatan: item yang membutuhkan akses ke GitHub, Vercel, atau Supabase tidak bisa
 - [x] typecheck: berhasil
 - [x] smoke test: berhasil
 - [x] production build: berhasil lewat workaround Windows-safe build ([scripts/build-safe.mjs](../scripts/build-safe.mjs))
+- [x] route production berhasil dibuat untuk homepage, admin, artikel, kategori, login, sitemap, dan robots
+- [x] lint final berhasil tanpa warning ESLint
 
 ## 10. Status saat ini
-Proyek sudah berada pada fase repo-ready dan local-build-ready. Sisa yang benar-benar menandai final production-readiness adalah integrasi ke GitHub/Vercel/Supabase dan validasi live environment.
+Proyek sudah berada pada fase repo-ready, local-build-ready, dan ter-deploy di Vercel. Sisa verifikasi utama adalah smoke test browser di production, konfirmasi environment variable serta backup Supabase, rotasi password admin default, dan aktivasi rate limit login.

@@ -52,13 +52,13 @@ src/
 6. Seed artikel: `node --env-file=.env.local scripts/seed-artikel.mjs` (idempotent)
 7. Jalankan: `npm run dev`
 
-> ⚠️ **`next build` lokal GAGAL di drive exFAT** (panic junction Turbopack / EISDIR webpack). Lokal cukup `npm run dev`; build produksi di Vercel (Linux). Scripts sudah pakai `--webpack` supaya dev juga aman.
+> ⚠️ Pada Windows / drive exFAT, build langsung dapat gagal karena problem filesystem junction/readlink. Gunakan `npm run build`, yang menyalin source ke direktori temporary lalu menjalankan build webpack secara aman.
 
 ## Skrip
 | Script | Tujuan |
 |---|---|
 | `npm run dev` | Dev server (mode webpack) di :3000 |
-| `npm run build` | Build produksi — **hanya jalan di Vercel** |
+| `npm run build` | Build produksi lewat Windows-safe wrapper; tetap dijalankan ulang oleh Vercel |
 | `npm run lint` | ESLint |
 | `npm run typecheck` | `tsc --noEmit` |
 | `node --env-file=.env.local scripts/test-slug.ts` | Unit test slug |
@@ -76,6 +76,8 @@ src/
 - [docs/05-operasional-sop.md](docs/05-operasional-sop.md) — deploy, rollback, backup, dan recovery
 - [docs/production-checklist.md](docs/production-checklist.md) — checklist kesiapan produksi
 
+Quality gate terakhir (2026-08-31): `npm run lint`, `npm run typecheck`, `npm run test`, dan `npm run build` berhasil. Build lokal masih menampilkan warning non-blocking dari Next.js tentang `outputFileTracingRoot` pada workspace Windows; hasil build tetap sukses.
+
 ## Akses Admin
 URL langsung (tidak ada link dari halaman publik):
 - Login: `https://benkyoulab-blog.vercel.app/login`
@@ -90,7 +92,7 @@ Guard berlapis: `proxy.ts` middleware + `auth()` di setiap server action + cek r
 ## Troubleshooting
 | Masalah | Solusi |
 |---|---|
-| `next build` crash lokal (panic junction / EISDIR) | Wajar di exFAT; push ke Vercel untuk build |
+| `next build` crash lokal (panic junction / EISDIR) | Jalankan `npm run build` agar memakai Windows-safe wrapper; Vercel tetap menjalankan build production di Linux |
 | `drizzle-kit push` hang lewat :6543 | Set `DRIZZLY_URL` ke session pooler :5432 |
 | Login "Email atau password salah" padahal DB sudah benar | Coba incognito, hindari autofill; cek `AUTH_SECRET` di Vercel env sama dgn lokal |
 | DB Supabase tidur (>7 hari idle) | Buka dashboard Supabase untuk wake up |

@@ -45,8 +45,9 @@ SOP ini mencakup:
 - PR harus dibuat untuk semua perubahan
 
 ### Vercel
+- production URL saat ini: https://benkyoulab-blog.vercel.app
 - production deployment dipicu dari branch `main`
-- preview deployment dipicu dari PR
+- preview deployment dipicu dari PR jika fitur Preview sudah aktif di project
 - environment variables dikelola di dashboard Vercel
 
 ### Supabase
@@ -77,7 +78,7 @@ SOP ini mencakup:
    ```bash
    npm run build
    ```
-4. Pastikan `.env.local` atau env lokal sudah diisi sesuai `.env.example`.
+4. Pastikan `.env.local` atau env lokal sudah diisi sesuai `.env.example`; jangan pernah commit file env atau token ke Git.
 5. Pastikan perubahan yang akan deploy sudah direview dan disetujui.
 6. Jika ada perubahan schema, pastikan migration plan sudah siap.
 
@@ -103,7 +104,7 @@ SOP ini mencakup:
    - dashboard artikel dapat dibuka
    - publish artikel berjalan
    - sitemap dan robots dalam keadaan valid
-5. Catat commit hash, timestamp, dan URL deployment pada log operasional.
+5. Catat commit hash, timestamp, dan URL deployment pada log operasional. Untuk deployment saat ini, URL production adalah https://benkyoulab-blog.vercel.app.
 
 ### 6.4 Checklist post-deploy
 
@@ -194,6 +195,7 @@ Backup semua konfigurasi penting:
 - `.env.local` disimpan aman di vault / secret manager
 - Vercel env variables dicatat dan dibackup di dokumentasi internal
 - URL Supabase, database key, dan secret perlu dicatat dalam vault aman
+- Jika token GitHub pernah tertulis di URL remote, segera revoke token tersebut, buat token pengganti dengan scope minimum, lalu gunakan credential helper atau SSH agar token tidak tersimpan di remote URL.
 
 ### 8.4 Retensi backup
 
@@ -270,6 +272,8 @@ Contoh format:
 - [ ] Vercel env valid
 - [ ] deployment plan ditulis
 - [ ] rollback plan siap
+
+Catatan build Windows: jalankan `npm run build`. Script tersebut memakai [scripts/build-safe.mjs](../scripts/build-safe.mjs) untuk menghindari masalah filesystem junction/readlink pada drive tertentu. Build production tetap dikonfirmasi oleh Vercel.
 
 ## 13. Checklist post-deploy final
 

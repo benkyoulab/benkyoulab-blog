@@ -37,8 +37,6 @@ if (fs.existsSync(tempRoot)) {
   fs.rmSync(tempRoot, { recursive: true, force: true });
 }
 
-const copyExcludes = new Set(['.git', '.next', 'dist', 'node_modules/.cache', 'node_modules/.vite']);
-
 function shouldSkip(filePath) {
   const rel = path.relative(root, filePath).split(path.sep).join('/');
   return rel.startsWith('.git/') || rel === '.git' || rel.startsWith('.next/') || rel === '.next' || rel.startsWith('dist/') || rel === 'dist';

@@ -10,9 +10,11 @@ export const revalidate = 300;
 
 const PER_PAGE = 12;
 
-export default async function HomePage({
-  searchParams,
-}: PageProps<"/">) {
+type Props = {
+  searchParams: Promise<{ page?: string | string[] }>;
+};
+
+export default async function HomePage({ searchParams }: Props) {
   const { page: pageParam } = await searchParams;
   const page = Math.max(1, Number(pageParam) || 1);
 

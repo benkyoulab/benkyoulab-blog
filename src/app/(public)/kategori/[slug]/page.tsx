@@ -8,7 +8,9 @@ import FadeIn from "@/components/fade-in";
 
 export const revalidate = 300;
 
-type Props = PageProps<"/kategori/[slug]">;
+type Props = {
+  params: Promise<{ slug: string }>;
+};
 
 async function getCategory(slug: string) {
   const [row] = await db.select().from(categories).where(eq(categories.slug, slug));

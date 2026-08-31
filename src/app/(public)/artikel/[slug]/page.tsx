@@ -15,7 +15,9 @@ import { formatTanggal } from "@/lib/format-date";
 // hasil render per-sesi tidak boleh masuk Full Route Cache. Upgrade path: pisah rute preview
 // (/admin/artikel/[id]/preview) kalau mau ISR untuk detail publik.
 
-type Props = PageProps<"/artikel/[slug]">;
+type Props = {
+  params: Promise<{ slug: string }>;
+};
 
 async function getPost(slug: string) {
   const [row] = await db

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "Materi belajar bahasa Jepang: kanji, tata bahasa, kosakata, dan tips latihan. 日本語を学ぼう。",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="id" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
