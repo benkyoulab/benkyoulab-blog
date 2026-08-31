@@ -6,6 +6,7 @@ import { categories, posts } from "@/db/schema";
 import FadeIn from "@/components/fade-in";
 
 export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Kategori — Benkyou Lab",

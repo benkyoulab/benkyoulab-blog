@@ -7,6 +7,7 @@ import FadeIn from "@/components/fade-in";
 import KanjiFloat from "@/components/kanji-float";
 
 export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 const PER_PAGE = 12;
 

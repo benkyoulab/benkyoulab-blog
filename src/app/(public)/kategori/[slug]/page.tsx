@@ -7,6 +7,7 @@ import PostCard from "@/components/post-card";
 import FadeIn from "@/components/fade-in";
 
 export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ slug: string }>;
