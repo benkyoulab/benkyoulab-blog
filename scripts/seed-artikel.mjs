@@ -11,6 +11,21 @@ if (!admin) {
   process.exit(1);
 }
 
+const editorialCategories = [
+  ["Berita Jepang", "berita-jepang", "Kabar dan perkembangan terbaru dari Jepang."],
+  ["JLPT & Tes", "jlpt-tes", "Informasi seputar JLPT, tes bahasa, dan persiapannya."],
+  ["MEXT & Beasiswa", "mext-beasiswa", "Panduan pendidikan, beasiswa, dan peluang studi ke Jepang."],
+  ["Budaya Jepang", "budaya-jepang", "Budaya, kebiasaan, dan kehidupan sehari-hari di Jepang."],
+];
+
+for (const [name, slug, description] of editorialCategories) {
+  await sql`
+    insert into categories (name, slug, description)
+    values (${name}, ${slug}, ${description})
+    on conflict (slug) do nothing
+  `;
+}
+
 const kategori = Object.fromEntries(
   (await sql`select id, slug from categories`).map((c) => [c.slug, c.id])
 );
@@ -242,6 +257,125 @@ const posts = [
 </ul>
 <p><em>(Masih draf — akan dilengkapi dengan tabel perbandingan dan strategi 4 bulan.)</em></p>`,
   },
+  {
+    slug: "kalender-libur-jepang-dan-waktu-terbaik-berkunjung",
+    categorySlug: "berita-jepang",
+    title: "Kalender Libur Jepang dan Waktu Terbaik Berkunjung",
+    excerpt: "Mengenal Golden Week, Obon, dan musim ramai agar rencana perjalanan ke Jepang lebih matang.",
+    thumbnail: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1200&q=80",
+    daysAgo: 2,
+    html: `<p>Jepang memiliki beberapa periode liburan panjang yang memengaruhi harga dan kepadatan transportasi. Memahami kalendernya membantu perjalanan terasa lebih nyaman.</p>
+<h2>Periode yang perlu diperhatikan</h2>
+<ul><li><strong>Golden Week</strong> biasanya berlangsung pada akhir April sampai awal Mei.</li><li><strong>Obon</strong> umumnya jatuh pada pertengahan Agustus.</li><li><strong>Tahun Baru</strong> menjadi masa pulang kampung bagi banyak keluarga Jepang.</li></ul>
+<p>Di luar periode ramai, musim semi dan gugur tetap populer karena cuaca nyaman. Pesan penginapan dan tiket lebih awal jika bepergian saat libur nasional.</p>`,
+  },
+  {
+    slug: "cara-mengikuti-pengumuman-jlpt-dan-jadwal-pendaftaran",
+    categorySlug: "jlpt-tes",
+    title: "Cara Mengikuti Pengumuman JLPT dan Jadwal Pendaftaran",
+    excerpt: "Panduan ringkas mengecek jadwal, lokasi, dan pengumuman JLPT dari sumber resmi.",
+    thumbnail: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1200&q=80",
+    daysAgo: 4,
+    html: `<p>Jadwal JLPT dapat berbeda menurut negara dan kota penyelenggara. Karena itu, calon peserta sebaiknya menjadikan situs resmi penyelenggara lokal sebagai rujukan utama.</p>
+<h2>Yang perlu dicek</h2>
+<ol><li>Periode pendaftaran dan biaya ujian.</li><li>Lokasi tes serta dokumen identitas yang diminta.</li><li>Batas waktu pengambilan kartu ujian.</li><li>Jadwal pengumuman hasil.</li></ol>
+<p>Siapkan pengingat kalender beberapa minggu sebelum pendaftaran dibuka. Hindari mengandalkan unggahan ulang yang tidak menyertakan tautan sumber.</p>`,
+  },
+  {
+    slug: "mengenal-beasiswa-mext-jalur-dan-dokumen-awal",
+    categorySlug: "mext-beasiswa",
+    title: "Mengenal Beasiswa MEXT: Jalur dan Dokumen Awal",
+    excerpt: "Gambaran awal jalur beasiswa MEXT dan dokumen yang biasanya perlu disiapkan calon pendaftar.",
+    thumbnail: "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?auto=format&fit=crop&w=1200&q=80",
+    daysAgo: 7,
+    html: `<p>MEXT adalah beasiswa pemerintah Jepang untuk berbagai jenjang pendidikan. Persyaratan dan jadwal dapat berubah, jadi informasi terbaru harus selalu dikonfirmasi melalui Kedutaan Besar Jepang atau universitas tujuan.</p>
+<h2>Persiapan dasar</h2>
+<ul><li>Riwayat pendidikan dan transkrip nilai.</li><li>Rencana studi atau proposal penelitian.</li><li>Sertifikat bahasa bila diminta oleh jalur yang dipilih.</li><li>Surat rekomendasi dan dokumen identitas.</li></ul>
+<p>Mulailah dengan membaca panduan tahun berjalan. Jangan membayar pihak yang menjanjikan kelulusan karena seleksi dilakukan melalui proses resmi.</p>`,
+  },
+  {
+    slug: "mengapa-konbini-menjadi-bagian-penting-hidup-di-jepang",
+    categorySlug: "budaya-jepang",
+    title: "Mengapa Konbini Menjadi Bagian Penting Hidup di Jepang",
+    excerpt: "Dari makanan cepat saji sampai layanan pembayaran, konbini hadir di banyak sudut kehidupan Jepang.",
+    thumbnail: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1200&q=80",
+    daysAgo: 9,
+    html: `<p>Konbini atau convenience store bukan sekadar tempat membeli minuman. Toko ini menawarkan makanan siap santap, mesin ATM, pembayaran tagihan, dan layanan pengiriman.</p>
+<h2>Kebiasaan kecil yang perlu diketahui</h2>
+<p>Pelayanan biasanya cepat dan praktis. Saat memanaskan makanan atau meminta kantong, dengarkan pertanyaan staf dan jawab singkat. Antrean tetap perlu dijaga, terutama pada jam sibuk.</p>
+<p>Setiap jaringan memiliki produk musiman sendiri. Itulah sebabnya mengunjungi konbini sering menjadi cara sederhana untuk melihat tren makanan lokal.</p>`,
+  },
+  {
+    slug: "transportasi-jepang-memahami-ic-card-dan-transfer-kereta",
+    categorySlug: "berita-jepang",
+    title: "Transportasi Jepang: Memahami IC Card dan Transfer Kereta",
+    excerpt: "Hal dasar yang perlu diketahui sebelum naik kereta Jepang, dari IC card sampai membaca jalur transfer.",
+    thumbnail: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=1200&q=80",
+    daysAgo: 12,
+    html: `<p>Jaringan kereta Jepang terlihat rumit pada peta pertama kali, tetapi alurnya cukup konsisten. IC card memudahkan pembayaran di banyak area, meski cakupan dan aturan penggunaannya dapat berbeda.</p>
+<h2>Tips berpindah jalur</h2>
+<ol><li>Catat nama stasiun tujuan dan nomor jalur.</li><li>Ikuti papan petunjuk transfer, bukan hanya warna garis.</li><li>Sisihkan waktu tambahan untuk stasiun besar.</li></ol>
+<p>Gunakan aplikasi navigasi sebagai bantuan, tetapi tetap perhatikan pengumuman dan papan digital ketika terjadi perubahan layanan.</p>`,
+  },
+  {
+    slug: "musim-tsuyu-dan-cara-warga-jepang-menghadapinya",
+    categorySlug: "budaya-jepang",
+    title: "Musim Tsuyu dan Cara Warga Jepang Menghadapinya",
+    excerpt: "Mengenal musim hujan Jepang, kebiasaan sehari-hari, dan kosakata yang sering muncul di pemberitaan.",
+    thumbnail: "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=1200&q=80",
+    daysAgo: 15,
+    html: `<p>Tsuyu adalah musim hujan yang biasanya datang sebelum musim panas di banyak wilayah Jepang. Intensitas dan waktunya tidak sama di setiap daerah.</p>
+<p>Payung lipat, sepatu yang cepat kering, dan memantau prakiraan cuaca menjadi bagian dari rutinitas. Saat membaca berita cuaca, kamu akan sering menemukan kata <strong>梅雨</strong> (tsuyu) dan <strong>大雨</strong> (ōame), hujan lebat.</p>
+<blockquote>Informasi cuaca lokal tetap menjadi rujukan utama saat merencanakan perjalanan.</blockquote>`,
+  },
+  {
+    slug: "tips-membaca-berita-jepang-dengan-bantuan-furigana",
+    categorySlug: "jlpt-tes",
+    title: "Tips Membaca Berita Jepang dengan Bantuan Furigana",
+    excerpt: "Strategi membaca berita Jepang secara bertahap tanpa harus menerjemahkan setiap kata.",
+    thumbnail: "https://images.unsplash.com/photo-1528164344705-47542687000d?auto=format&fit=crop&w=1200&q=80",
+    daysAgo: 18,
+    html: `<p>Membaca berita Jepang tidak harus dimulai dari artikel panjang. Pilih berita singkat, tandai kata yang berulang, lalu cari inti peristiwa dari judul dan kalimat pertama.</p>
+<h2>Urutan latihan</h2>
+<ol><li>Baca judul tanpa membuka kamus.</li><li>Tebak topik dari kata benda yang dikenal.</li><li>Gunakan furigana dan kamus hanya untuk kata kunci.</li><li>Tulis ringkasan satu kalimat dalam bahasa Indonesia.</li></ol>
+<p>Latihan rutin membantu mengenali pola bahasa berita seperti 発表 (pengumuman), 開催 (penyelenggaraan), dan 予定 (rencana).</p>`,
+  },
+  {
+    slug: "aturan-sopan-santun-saat-berkunjung-ke-kuil-jepang",
+    categorySlug: "budaya-jepang",
+    title: "Aturan Sopan Santun Saat Berkunjung ke Kuil Jepang",
+    excerpt: "Panduan singkat menjaga sikap saat berkunjung ke kuil dan tempat ibadah di Jepang.",
+    thumbnail: "https://images.unsplash.com/photo-1478436127897-769e1b3f0f36?auto=format&fit=crop&w=1200&q=80",
+    daysAgo: 21,
+    html: `<p>Kuil dan tempat ibadah di Jepang adalah ruang spiritual sekaligus tujuan wisata. Pengunjung perlu menjaga suara, mengikuti tanda, dan tidak memotret area yang dilarang.</p>
+<h2>Etika dasar</h2>
+<ul><li>Berhenti sejenak dan membungkuk ringan di gerbang.</li><li>Bersihkan tangan di tempat yang disediakan.</li><li>Ikuti tata cara setempat tanpa mengganggu orang yang beribadah.</li></ul>
+<p>Aturan dapat berbeda antar tempat. Papan informasi lokal selalu lebih penting daripada panduan umum di internet.</p>`,
+  },
+  {
+    slug: "apa-yang-perlu-dicek-sebelum-studi-ke-jepang",
+    categorySlug: "mext-beasiswa",
+    title: "Apa yang Perlu Dicek Sebelum Studi ke Jepang",
+    excerpt: "Checklist awal tentang kampus, biaya hidup, kalender akademik, dan dokumen sebelum berangkat.",
+    thumbnail: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=1200&q=80",
+    daysAgo: 24,
+    html: `<p>Keputusan studi ke Jepang membutuhkan riset yang lebih luas daripada memilih kampus. Periksa bahasa pengantar, kalender akademik, biaya hidup, dan akses tempat tinggal.</p>
+<h2>Checklist awal</h2>
+<ul><li>Pastikan program sesuai latar belakang dan target karier.</li><li>Bandingkan biaya kuliah serta estimasi biaya hidup.</li><li>Cek asuransi, visa, dan jadwal keberangkatan.</li><li>Simpan dokumen penting dalam bentuk digital dan cetak.</li></ul>
+<p>Informasi resmi universitas dan imigrasi harus menjadi dasar keputusan. Artikel blog dapat membantu orientasi, tetapi bukan pengganti pengumuman resmi.</p>`,
+  },
+  {
+    slug: "membaca-papan-pengumuman-jepang-dengan-lebih-mudah",
+    categorySlug: "berita-jepang",
+    title: "Membaca Papan Pengumuman Jepang dengan Lebih Mudah",
+    excerpt: "Kenali kosakata yang sering muncul di papan stasiun, toko, dan pengumuman layanan publik Jepang.",
+    thumbnail: "https://images.unsplash.com/photo-1522383225653-ed111181a951?auto=format&fit=crop&w=1200&q=80",
+    daysAgo: 27,
+    html: `<p>Papan pengumuman di Jepang sering memakai kalimat singkat dan kosakata formal. Mengenali beberapa kata kunci membuat informasi penting lebih mudah dipahami.</p>
+<h2>Kata yang sering muncul</h2>
+<ul><li><strong>お知らせ</strong> berarti pemberitahuan.</li><li><strong>休業</strong> berarti tutup sementara.</li><li><strong>運休</strong> berarti layanan kereta dihentikan.</li><li><strong>注意</strong> berarti perhatian atau waspada.</li></ul>
+<p>Baca judul dan angka terlebih dahulu, kemudian cari tanggal, waktu, lokasi, serta tindakan yang diminta. Strategi ini berguna saat bepergian maupun membaca berita lokal.</p>`,
+  },
 ];
 
 let added = 0;
@@ -256,7 +390,7 @@ for (const p of posts) {
       ${p.slug},
       ${p.excerpt},
       ${p.html},
-      ${""},
+      ${p.html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()},
       ${p.thumbnail},
       ${p.status ?? "published"},
       ${p.status === "draft" ? null : sql`now() - (${p.daysAgo} * interval '1 day')`}
