@@ -40,7 +40,11 @@ INSERT INTO categories (name, slug, description) VALUES
   ('Kosakata',      'kosakata',      'Perbendaharaan kata dan cara menghafalnya'),
   ('Kanji',         'kanji',         'Cara baca, arti, dan tips menghafal kanji'),
   ('Tata Bahasa',   'tata-bahasa',   'Pola kalimat dan grammar N5-N3'),
-  ('Tips Belajar',  'tips-belajar',  'Strategi, jadwal, dan pengalaman belajar')
+  ('Tips Belajar',  'tips-belajar',  'Strategi, jadwal, dan pengalaman belajar'),
+  ('Berita Jepang', 'berita-jepang', 'Kabar dan perkembangan terbaru dari Jepang'),
+  ('JLPT & Tes',    'jlpt-tes',      'Informasi seputar JLPT, tes bahasa, dan persiapannya'),
+  ('MEXT & Beasiswa','mext-beasiswa', 'Panduan pendidikan, beasiswa, dan peluang studi ke Jepang'),
+  ('Budaya Jepang', 'budaya-jepang', 'Budaya, kebiasaan, dan kehidupan sehari-hari di Jepang')
 ON CONFLICT (slug) DO NOTHING;
 
 -- POSTS --------------------------------------------------------

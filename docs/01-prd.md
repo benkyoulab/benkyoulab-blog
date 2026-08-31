@@ -1,21 +1,25 @@
 # PRD — Benkyou Lab Blog
 
-**Versi:** 1.0 · **Tanggal:** 2026-08-24 · **Status:** Draft untuk review
+**Versi:** 1.1 · **Tanggal:** 2026-08-31 · **Status:** Baseline implementasi
 
 ---
 
 ## 1. Ringkasan
 
-Benkyou Lab adalah blog materi belajar bahasa Jepang. Penulis (admin/writer) membuat artikel lewat dashboard dengan text editor WYSIWYG yang mudah dipakai; pembaca umum membaca artikel gratis melalui situs publik.
+Benkyou Lab adalah blog berbahasa Indonesia tentang kabar dan kehidupan Jepang. Cakupannya meliputi berita, JLPT, MEXT dan beasiswa, budaya, bahasa, serta panduan praktis. Penulis (admin/writer) membuat artikel lewat dashboard dengan text editor WYSIWYG; pembaca umum membaca dan menemukan artikel gratis melalui situs publik.
 
 **Non-goal:** multi-tenancy, komentar, i18n, aplikasi mobile, upload file gambar ke server.
 
 ## 2. Latar Belakang & Masalah
 
-Konten belajar bahasa Jepang saat ini tersebar dan tidak terstruktur. Dibutuhkan satu rumah digital yang:
-- mudah diupdate non-teknis (writer tidak pegang kode),
+ Informasi tentang Jepang tersebar di banyak sumber dan sering sulit diikuti pembaca Indonesia. Dibutuhkan satu rumah editorial yang:
+	- mudah diupdate non-teknis (writer tidak pegang kode),
+	- membedakan berita, panduan, dan konten belajar melalui rubrik,
 - cepat dan ramah SEO agar mudah ditemukan,
 - murah dioperasikan (nol biaya di tahap awal).
+Informasi tentang Jepang tersebar di banyak sumber dan sering sulit diikuti pembaca Indonesia. Dibutuhkan satu rumah editorial yang:
+- mudah diupdate non-teknis (writer tidak pegang kode),
+- membedakan berita, panduan, dan konten belajar melalui rubrik,
 
 ## 3. Pengguna & Peran
 
@@ -30,10 +34,11 @@ Konten belajar bahasa Jepang saat ini tersebar dan tidak terstruktur. Dibutuhkan
 ### 4.1 Situs Publik
 | ID | Fitur | Detail |
 |---|---|---|
-| P-01 | Beranda | Daftar artikel terbaru (thumbnail, judul, excerpt, kategori, tanggal), pagination |
+| P-01 | Beranda | Hero highlight/carousel, daftar artikel terbaru, thumbnail, judul, excerpt, rubrik, tanggal, pagination |
 | P-02 | Detail artikel | Judul, thumbnail, konten rich text, info penulis & tanggal, kategori |
 | P-03 | Arsip kategori | Daftar artikel per kategori |
-| P-04 | SEO | Meta title/description per artikel, Open Graph image dari thumbnail URL, sitemap.xml, robots.txt |
+| P-04 | Search & discovery | Search realtime, filter rubrik, urutan terbaru/terlama/judul A-Z, URL query yang dapat dibagikan |
+| P-05 | SEO | Meta title/description per artikel, Open Graph image dari thumbnail URL, sitemap.xml, robots.txt |
 
 ### 4.2 Dashboard
 | ID | Fitur | Detail |
@@ -95,4 +100,4 @@ Detail lengkap: [`02-schema.sql`](./02-schema.sql)
 
 ## 10. Di Luar Cakupan v1
 
-Pencarian teks penuh, komentar, newsletter, dark mode toggle, editor multi-bahasa (JP/ID side-by-side), analitik lanjutan, scheduling publish.
+Komentar, newsletter, editor multi-bahasa (JP/ID side-by-side), analitik lanjutan, scheduling publish, dan upload/storage gambar internal. Search v1 memakai `ILIKE` pada judul, excerpt, dan `content_text`; full-text search berbasis indeks dapat dipertimbangkan ketika volume artikel meningkat.

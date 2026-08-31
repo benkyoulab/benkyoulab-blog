@@ -48,6 +48,10 @@ Catatan: verifikasi lokal dan status deployment live sudah diperbarui berdasarka
 - [x] Thumbnail fallback dan placeholder aktif ([src/components/safe-img.tsx](../src/components/safe-img.tsx))
 - [x] Gambar eksternal dengan URL valid (alur admin/content sudah menerapkan validation URL)
 - [x] SOP penulisan artikel dan kategori dibuat ([docs/panduan-writer.md](./panduan-writer.md))
+- [x] Homepage memiliki highlight carousel artikel terbaru
+- [x] Search realtime, filter rubrik, dan sorting tersedia di homepage
+- [x] 10 artikel editorial Jepang dengan thumbnail URL sudah di-seed
+- [x] Rubrik editorial Berita Jepang, JLPT & Tes, MEXT & Beasiswa, dan Budaya Jepang tersedia
 
 ## 7. Operations
 - [ ] Admin password diganti dari default (blocked: butuh login ke environment production)
@@ -73,4 +77,4 @@ Catatan: verifikasi lokal dan status deployment live sudah diperbarui berdasarka
 - [x] lint final berhasil tanpa warning ESLint
 
 ## 10. Status saat ini
-Proyek sudah berada pada fase repo-ready, local-build-ready, dan ter-deploy di Vercel. Sisa verifikasi utama adalah smoke test browser di production, konfirmasi environment variable serta backup Supabase, rotasi password admin default, dan aktivasi rate limit login.
+Proyek sudah berada pada fase repo-ready, local-build-ready, dan ter-deploy di Vercel, dengan homepage editorial, carousel highlight, search/filter/sort, serta data awal berita/info Jepang. Sisa verifikasi utama adalah smoke test browser di production, konfirmasi environment variable serta backup Supabase, rotasi password admin default, dan aktivasi rate limit login.

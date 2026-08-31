@@ -7,13 +7,13 @@
 
 ## 1. Design Tokens
 
-Semua warna di bawah adalah **palette bawaan Tailwind** → tidak perlu custom theme, pakai class langsung (`bg-red-600`, `text-gray-900`, dst).
+Warna utama memakai token editorial khusus agar identitas blog tidak terasa seperti dashboard template.
 
 ### Warna
 | Token | Nilai | Kelas Tailwind | Pemakaian |
 |---|---|---|---|
-| Primary | `#dc2626` | `red-600` | Tombol utama, link aktif, ikon aksen |
-| Primary hover | `#b91c1c` | `red-700` | Hover tombol primary |
+| Primary | `#c83c2d` | custom vermilion | Tombol utama, link aktif, aksen editorial |
+| Primary hover | `#a92f24` | custom vermilion gelap | Hover tombol primary |
 | Primary soft | `#ef4444` | `red-500` | Ikon, hover link, badge border |
 | Tint | `#fee2e2` | `red-100` | Background chip/badge kategori |
 | Tint muda | `#fef2f2` | `red-50` | Background section highlight |
@@ -52,7 +52,7 @@ Sticky transparan dengan blur dan garis bawah aktif yang tipis. Desktop memiliki
 ### Post Card (beranda & arsip)
 ```
 ┌─────────────────────┐
-│ thumbnail 16:9      │  rounded-t-2xl, object-cover
+│ thumbnail 4:3       │  object-cover
 │  ┌──────────┐       │
 │  │chip kat. │       │  absolute top-3 left-3, bg-red-100 text-red-700
 │  └──────────┘       │
@@ -61,7 +61,7 @@ Sticky transparan dengan blur dan garis bawah aktif yang tipis. Desktop memiliki
 │ Excerpt (2 baris)   │  text-gray-600, line-clamp-2, text-sm
 │ 📅 tanggal · ✍ penulis │  text-gray-400 text-xs
 └─────────────────────┘
-bg-white rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition
+bg-white rounded-xl, garis vermilion, shadow sangat lembut
 ```
 
 ### Featured Carousel (beranda)
@@ -135,9 +135,7 @@ Selang-seling: `bg-white` → `bg-gray-50`. Judul section pola situs referensi: 
 
 ```ts
 // src/app/layout.tsx
-import { Inter } from "next/font/google";
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-// <html className={inter.variable}>
+import { DM_Sans, Noto_Serif_JP } from "next/font/google";
 ```
 
 Dependensi tambahan Fase 5: `npm i -D @tailwindcss/typography`

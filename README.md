@@ -1,6 +1,6 @@
 # Benkyou Lab Blog
 
-Blog materi bahasa Jepang — kanji, tata bahasa, kosakata, dan tips belajar JLPT. Ditulis ringkas, praktis, dan gratis.
+Blog berita dan info Jepang — kabar terkini, JLPT, MEXT, beasiswa, budaya, kehidupan sehari-hari, dan bahasa. Ditulis ringkas, jernih, dan gratis.
 
 ## Live
 - **Produksi:** https://benkyoulab-blog.vercel.app
@@ -20,7 +20,7 @@ Blog materi bahasa Jepang — kanji, tata bahasa, kosakata, dan tips belajar JLP
 src/
 ├── app/
 │   ├── (public)/           # publik: layout dgn header/footer/animasi
-│   │   ├── page.tsx        # beranda (hero + statistik + grid artikel)
+│   │   ├── page.tsx        # beranda (hero carousel + search/filter + grid artikel)
 │   │   ├── artikel/[slug]/ # detail artikel + reading progress + related
 │   │   ├── kategori/       # indeks kategori + per-kategori
 │   │   └── tentang/        # halaman about
@@ -29,8 +29,9 @@ src/
 │   ├── login/              # halaman login
 │   ├── error.tsx, not-found.tsx, robots.ts, sitemap.ts
 │   └── layout.tsx          # root layout + script anti-flash tema
-├── components/             # site-header, site-footer, post-card, kanji-float,
-│                           # safe-img, motion-provider, fade-in, theme-toggle, editor/
+├── components/             # site-header, featured-carousel, article-filters,
+│                           # site-footer, post-card, safe-img, motion-provider,
+│                           # fade-in, theme-toggle, editor/
 ├── db/                     # schema Drizzle + client (postgres-js)
 ├── lib/                    # format-date, sanitize, slug, validators
 ├── auth.ts                 # NextAuth config (Credentials + JWT + role)
@@ -52,6 +53,8 @@ src/
 6. Seed artikel: `node --env-file=.env.local scripts/seed-artikel.mjs` (idempotent)
 7. Jalankan: `npm run dev`
 
+Seeder data awal: `node --env-file=.env.local scripts/seed-artikel.mjs`. Seeder idempotent, menambahkan rubrik editorial dan 10 artikel info Jepang dengan thumbnail URL eksternal.
+
 > ⚠️ Pada Windows / drive exFAT, build langsung dapat gagal karena problem filesystem junction/readlink. Gunakan `npm run build`, yang menyalin source ke direktori temporary lalu menjalankan build webpack secara aman.
 
 ## Skrip
@@ -64,6 +67,8 @@ src/
 | `node --env-file=.env.local scripts/test-slug.ts` | Unit test slug |
 | `node --env-file=.env.local scripts/test-sanitize.ts` | Unit test sanitasi |
 | `node --env-file=.env.local scripts/test-public.mjs` | E2E publik (9 skenario) |
+
+Homepage menyediakan pencarian realtime berdasarkan judul, excerpt, dan isi artikel. Filter rubrik serta urutan terbaru, terlama, dan judul A-Z mengubah URL sehingga hasil dapat dibagikan.
 
 ## Deployment (Vercel)
 1. Import repo `benkyoulab/benkyoulab-blog` di Vercel

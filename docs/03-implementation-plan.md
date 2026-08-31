@@ -3,18 +3,18 @@
 > Prasyarat: akun GitHub, Vercel, dan Supabase sudah dibuat. Node.js ≥ 20.9 terpasang (syarat minimal Next.js 16).
 > Semua path relatif terhadap root proyek: `E:/Project/Web/benkyoulab/`
 
-**Goal:** Blog Next.js + Supabase yang live di Vercel, dengan dashboard editor WYSIWYG (Tiptap) dan gambar berbasis URL.
+**Goal:** Blog editorial Next.js + Supabase yang live di Vercel, membahas kabar dan info Jepang dengan rubrik berita, JLPT, MEXT, budaya, bahasa, dan panduan praktis. Dashboard menyediakan editor WYSIWYG (Tiptap) dan gambar berbasis URL.
 
-**Arsitektur:** Monorepo Next.js App Router. Publik = Server Components + ISR. Admin = Client Components + Server Actions. DB diakses via Drizzle (postgres-js) melalui Supabase Transaction Pooler — pola resmi untuk environment serverless seperti Vercel.
+**Arsitektur:** Monorepo Next.js App Router. Publik = Server Components + dynamic DB reads; homepage memiliki carousel highlight dan discovery query. Admin = Client Components + Server Actions. DB diakses via Drizzle (postgres-js) melalui Supabase Transaction Pooler — pola untuk environment serverless seperti Vercel.
 
 **Catatan Next.js 16 (dikonfirmasi dari docs resmi via Context7):**
-- Turbopack adalah bundler default — script `dev`/`build` polos tanpa flag `--turbopack`.
+- Next.js 16 menggunakan Turbopack sebagai default, tetapi proyek ini sengaja memakai webpack untuk dev dan build agar kompatibel dengan filesystem Windows tertentu.
 - Konvensi `middleware.ts` diganti `proxy.ts` (export bernama `proxy`, runtime Node.js; edge tidak didukung di proxy).
 - Semua Request API wajib async: `params`, `searchParams`, `cookies()` di-`await`. Tipe halaman bisa pakai helper bawaan `PageProps<'/route/[param]'>`.
 
 ---
 
-## Fase 0 — Bootstrap & jalur deploy diverifikasi lebih awal
+Server Component: query `posts where status='published'` dengan `q`, `category`, `sort`, dan pagination. Homepage memakai `force-dynamic` karena membaca database saat request; form discovery realtime memperbarui query URL dengan debounce 350 ms.
 
 Prinsip: pastikan "hello world" sudah LIVE di Vercel sebelum bikin fitur. Deploy gagal harus ketahuan di menit pertama, bukan di akhir.
 
@@ -165,11 +165,10 @@ Tombol "Preview" membuka `/artikel/[slug]?preview=1` — halaman detail merender
 ## Fase 5 — Situs publik
 
 ### Task 5.1 — Layout & komponen bersama
-`components/post-card.tsx` (thumbnail `<img loading="lazy">` + placeholder kalau URL kosong), header/nav, footer. Styling Tailwind — desain minimalis, tenang.
-Design system mengikuti `docs/04-design-guide.md`: font Inter via next/font, primary red-600, kartu putih `rounded-2xl shadow-sm`, tombol pill, chip kategori `bg-red-100 text-red-700`, aksen kanji dekoratif samar. Tambah `@tailwindcss/typography` untuk konten artikel (`prose prose-gray`).
+`components/post-card.tsx` (thumbnail `<img loading="lazy">` + placeholder kalau URL kosong), `featured-carousel.tsx`, `article-filters.tsx`, header/nav, footer. Styling mengikuti arah editorial study journal di `docs/04-design-guide.md`: DM Sans, Noto Serif JP, kertas hangat, vermilion hemat, garis tipis, dan kartu ringan. Tambah `@tailwindcss/typography` untuk konten artikel (`prose prose-gray`).
 
 ### Task 5.2 — Halaman daftar `/`
-Server Component: query `posts where status='published' order by published_at desc limit 12 offset …`, pagination via `const { page } = await props.searchParams` (`?page=` — Promise di Next 16). `export const revalidate = 300`.
+Server Component: query `posts where status='published'` dengan search `q`, filter `category`, sort `latest|oldest|title`, dan pagination. Form discovery di client memperbarui URL realtime dengan debounce 350 ms; data tetap diambil server-side. `export const dynamic = "force-dynamic"` karena membaca database pada request.
 
 ### Task 5.3 — Detail `/artikel/[slug]`
 Render `content_html` tersanitasi + `dangerouslySetInnerHTML` (aman karena disanitasi saat simpan). Slug async: `const { slug } = await props.params` atau helper `PageProps<'/artikel/[slug]'>`. Metadata: title, description=excerpt, openGraph.images=[thumbnail_url]. Draft → notFound() kecuali preview (Task 4.4).
@@ -177,14 +176,14 @@ Render `content_html` tersanitasi + `dangerouslySetInnerHTML` (aman karena disan
 ### Task 5.4 — Kategori `/kategori/[slug]`
 Daftar artikel published per kategori + metadata.
 
-✅ Verifikasi fase 5: alur end-to-end — publish artikel dari admin → muncul di `/`, klik masuk detail, filter kategori jalan. Cek incognito bahwa draft tak tampak. Commit.
+✅ Verifikasi fase 5: alur end-to-end — publish artikel dari admin → muncul di carousel dan daftar `/`, search/filter/sort realtime, klik masuk detail, filter kategori jalan. Cek incognito bahwa draft tak tampak. Commit.
 
 ---
 
 ## Fase 6 — SEO & polish
 
 ### Task 6.1 — `app/sitemap.ts` + `app/robots.ts`
-sitemap = statis (/, /login) + semua `/artikel/*` & `/kategori/*` published dari DB.
+sitemap membaca artikel dan kategori dari DB pada runtime; semua halaman publik penting tetap tercantum.
 
 ### Task 6.2 — Metadata global & favicon
 `layout.tsx`: metadata template `%s · Benkyou Lab`, metadataBase dari env `NEXT_PUBLIC_SITE_URL`.
@@ -203,7 +202,7 @@ Daftar kosong, gambar rusak (`onError` → placeholder), `not-found.tsx`, `error
 - [ ] Domain custom (opsional) + update `metadataBase`.
 - [ ] Env Vercel memakai Transaction Pooler URL (port 6543), bukan direct connection.
 - [ ] Ingat: Supabase free tier menjeda project setelah ±7 hari tidak aktif — aktifkan lagi dari dashboard bila terjadi.
-- [ ] Tulis `docs/panduan-writer.md` ringkas: cara login, menulis, memasukkan gambar (host yang disarankan), publish.
+- [x] Tulis `docs/panduan-writer.md` ringkas: cara login, menulis, memasukkan gambar URL, publish, dan verifikasi sumber editorial.
 
 ---
 

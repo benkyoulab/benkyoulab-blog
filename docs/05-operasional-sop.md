@@ -100,6 +100,8 @@ SOP ini mencakup:
 3. Vercel akan memulai production deployment otomatis.
 4. Setelah build selesai, lakukan checklist berikut:
    - homepage dapat diakses
+   - highlight carousel menampilkan artikel terbaru
+   - search, filter rubrik, dan sorting mengembalikan hasil yang benar
    - login admin dapat masuk
    - dashboard artikel dapat dibuka
    - publish artikel berjalan
@@ -177,6 +179,16 @@ Jika perubahan data atau schema membuat sistem rusak:
 - Repository GitHub otomatis menyimpan perubahan versi.
 - Pastikan branch `main` selalu tercommit dengan perubahan yang valid.
 - Simpan tag / release bila rilis penting.
+
+### 8.1.1 Seed data editorial
+
+Seeder artikel dapat dijalankan ulang dengan aman:
+
+```bash
+node --env-file=.env.local scripts/seed-artikel.mjs
+```
+
+Seeder menambahkan kategori editorial dan artikel contoh hanya jika slug belum ada. Setiap artikel seed published memakai thumbnail URL eksternal. Jangan menjalankan seeder terhadap database production tanpa memastikan isi artikel dan URL gambarnya memang diinginkan.
 
 ### 8.2 Backup database
 
