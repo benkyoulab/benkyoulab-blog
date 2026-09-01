@@ -7,6 +7,18 @@ const optionalUrl = z
   .or(z.literal(""))
   .refine((v) => !v || /^https:\/\//.test(v), "Thumbnail harus https://");
 
+export function parseTagNamesFromFormData(formData: FormData): string[] {
+  const rawValues = formData.getAll("tags");
+  return Array.from(
+    new Set(
+      rawValues
+        .flatMap((value) => String(value).split(","))
+        .map((value) => value.trim())
+        .filter(Boolean),
+    ),
+  );
+}
+
 export const postSchema = z.object({
   title: z.string().trim().min(3, "Judul minimal 3 karakter").max(200),
   excerpt: z.string().trim().max(320).optional().or(z.literal("")),
@@ -18,6 +30,7 @@ export const postSchema = z.object({
   thumbnailUrl: optionalUrl,
   contentHtml: z.string().min(1, "Konten tidak boleh kosong"),
   tags: z.preprocess((v) => {
+    if (v instanceof FormData) return parseTagNamesFromFormData(v);
     if (typeof v === "string") return v.split(",").map((s) => s.trim()).filter(Boolean);
     if (Array.isArray(v)) return v.map((s) => String(s).trim()).filter(Boolean);
     return [];

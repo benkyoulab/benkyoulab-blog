@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { posts, tags, postTags } from "@/db/schema";
 import { auth } from "@/auth";
-import { postSchema } from "@/lib/validators";
+import { parseTagNamesFromFormData, postSchema } from "@/lib/validators";
 import { sanitizeHtml, htmlToText } from "@/lib/sanitize";
 import { slugify, uniqueSlug } from "@/lib/slug";
 import { refreshPublicCache } from "@/lib/cache-refresh";
@@ -53,13 +53,16 @@ async function slugExists(slug: string) {
 
 export async function savePost(_prev: PostActionState, formData: FormData): Promise<PostActionState> {
   const session = await requireUser();
-  const parsed = postSchema.safeParse(Object.fromEntries(formData));
+  const tagNames = parseTagNamesFromFormData(formData);
+  const parsed = postSchema.safeParse({
+    ...Object.fromEntries(formData.entries()),
+    tags: formData,
+  });
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
   const d = parsed.data;
   const id = Number(formData.get("id")) || null;
   const publish = formData.get("action") === "publish";
-  const tagNames = d.tags ?? [];
 
   // Sanitasi server-side — bukan cuma di render.
   const contentHtml = sanitizeHtml(d.contentHtml);

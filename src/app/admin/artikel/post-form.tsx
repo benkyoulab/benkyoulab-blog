@@ -37,7 +37,6 @@ export default function PostForm({
     <form action={formAction} className="grid gap-6 lg:grid-cols-[1fr_320px]">
       {initial && <input type="hidden" name="id" value={initial.id} />}
       <input type="hidden" name="contentHtml" value={html} />
-      <input type="hidden" name="tags" value={selectedTags.join(",")} />
 
       <div className="space-y-4">
         <input name="title" required defaultValue={initial?.title} placeholder="Judul artikel" className={`${input} !text-lg font-semibold`} />
