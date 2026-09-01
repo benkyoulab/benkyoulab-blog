@@ -17,9 +17,19 @@ export const postSchema = z.object({
     .nullable(),
   thumbnailUrl: optionalUrl,
   contentHtml: z.string().min(1, "Konten tidak boleh kosong"),
+  tags: z.preprocess((v) => {
+    if (typeof v === "string") return v.split(",").map((s) => s.trim()).filter(Boolean);
+    if (Array.isArray(v)) return v.map((s) => String(s).trim()).filter(Boolean);
+    return [];
+  }, z.array(z.string().min(1).max(40)).max(10).default([])),
 });
 
 export const categorySchema = z.object({
   name: z.string().trim().min(2, "Nama minimal 2 karakter").max(80),
   description: z.string().trim().max(300).optional().or(z.literal("")),
+});
+
+export const tagSchema = z.object({
+  name: z.string().trim().min(2, "Nama tag minimal 2 karakter").max(80),
+  description: z.string().trim().max(240).optional().or(z.literal("")),
 });

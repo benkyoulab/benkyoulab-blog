@@ -3,9 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { categories, posts } from "@/db/schema";
+import { categories, posts, tags } from "@/db/schema";
 import { auth } from "@/auth";
-import { categorySchema } from "@/lib/validators";
+import { categorySchema, tagSchema } from "@/lib/validators";
 import { slugify, uniqueSlug } from "@/lib/slug";
 import { refreshPublicCache } from "@/lib/cache-refresh";
 
@@ -71,6 +71,33 @@ export async function updateCategory(_prev: ActionState, formData: FormData): Pr
   } catch {
     return { error: "Gagal memperbarui kategori." };
   }
+}
+
+export async function createTag(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const parsed = tagSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+
+  const name = parsed.data.name;
+  const slug = await uniqueSlug(slugify(name), async (s) => {
+    const [row] = await db.select({ id: tags.id }).from(tags).where(eq(tags.slug, s)).limit(1);
+    return !!row;
+  });
+
+  try {
+    await db.insert(tags).values({ name, slug, description: parsed.data.description || null });
+  } catch {
+    return { error: "Gagal menyimpan tag." };
+  }
+
+  revalidatePath("/admin/kategori");
+  return {};
+}
+
+export async function deleteTag(id: number): Promise<void> {
+  await requireAdmin();
+  await db.delete(tags).where(eq(tags.id, id));
+  revalidatePath("/admin/kategori");
 }
 
 // Hapus kategori tidak menghapus post — categoryId otomatis NULL (ON DELETE SET NULL).

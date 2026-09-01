@@ -10,6 +10,7 @@ Blog berita dan info Jepang — kabar terkini, JLPT, MEXT, beasiswa, budaya, keh
 - **Next.js 16** (App Router, route group `(public)`, Server Components default)
 - **Supabase Postgres** (transaction pooler :6543 untuk runtime, session :5432 untuk tooling)
 - **Drizzle ORM** + `drizzle-kit`
+- **Schema editorial dengan kategori + tag multi-tag** (`categories`, `tags`, `post_tags`)
 - **Auth.js v5** (JWT, Credentials provider, guard berlapis)
 - **Tiptap v3** editor + `sanitize-html` allowlist
 - **Tailwind CSS v4** + `@tailwindcss/typography` + `motion` (Framer Motion successor)
@@ -82,7 +83,7 @@ Update konten editorial: `node --env-file=.env.local scripts/update-editorial-ne
 | `node --env-file=.env.local scripts/test-sanitize.ts` | Unit test sanitasi |
 | `node --env-file=.env.local scripts/test-public.mjs` | E2E publik (9 skenario) |
 
-Homepage menyediakan pencarian realtime berdasarkan judul, excerpt, dan isi artikel. Filter rubrik serta urutan terbaru, terlama, dan judul A-Z mengubah URL sehingga hasil dapat dibagikan.
+Homepage menyediakan pencarian realtime berdasarkan judul, excerpt, dan isi artikel. Filter rubrik, tag multi-tag, serta urutan terbaru, terlama, dan judul A-Z mengubah URL sehingga hasil dapat dibagikan.
 
 Motion publik memakai GSAP + Lenis melalui `components/gsap-shell.tsx`: smooth scrolling, reveal saat route berubah, dan cleanup otomatis. Animasi dinonaktifkan otomatis saat browser mengaktifkan `prefers-reduced-motion`. Prinsip anti-AI-slop dan interaction thesis mengacu pada [genjutsu](https://github.com/AThevon/genjutsu), bukan sebagai dependency runtime.
 

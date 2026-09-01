@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { posts, users, categories } from "@/db/schema";
+import { posts, users, categories, tags, postTags } from "@/db/schema";
 import PostCard from "@/components/post-card";
 import FadeIn from "@/components/fade-in";
 import FeaturedCarousel from "@/components/featured-carousel";
@@ -18,6 +18,7 @@ type Props = {
     page?: string | string[];
     q?: string | string[];
     category?: string | string[];
+    tag?: string | string[];
     sort?: string | string[];
   }>;
 };
@@ -27,6 +28,7 @@ export default async function HomePage({ searchParams }: Props) {
   const pageParam = Array.isArray(params.page) ? params.page[0] : params.page;
   const query = (Array.isArray(params.q) ? params.q[0] : params.q)?.trim() ?? "";
   const category = Array.isArray(params.category) ? params.category[0] : params.category;
+  const tag = Array.isArray(params.tag) ? params.tag[0] : params.tag;
   const sort = Array.isArray(params.sort) ? params.sort[0] : params.sort;
   const page = Math.max(1, Number(pageParam) || 1);
 
@@ -41,10 +43,21 @@ export default async function HomePage({ searchParams }: Props) {
     );
   }
   if (category) filters.push(eq(categories.slug, category));
+  if (tag) {
+    filters.push(
+      sql`EXISTS (
+        SELECT 1
+        FROM ${postTags} pt
+        INNER JOIN ${tags} t ON t.id = pt.tag_id
+        WHERE pt.post_id = ${posts.id}
+          AND t.slug = ${tag}
+      )`
+    );
+  }
 
   const orderBy = sort === "oldest" ? asc(posts.publishedAt) : sort === "title" ? asc(posts.title) : desc(posts.publishedAt);
 
-  const [rows, catRows, [{ total }]] = await Promise.all([
+  const [rows, catRows, tagRows, [{ total }]] = await Promise.all([
     db
       .select({
         slug: posts.slug,
@@ -69,21 +82,28 @@ export default async function HomePage({ searchParams }: Props) {
       .groupBy(categories.id)
       .orderBy(categories.name),
     db
+      .select({ name: tags.name, slug: tags.slug, n: sql<number>`count(${postTags.postId})::int` })
+      .from(tags)
+      .leftJoin(postTags, eq(postTags.tagId, tags.id))
+      .groupBy(tags.id)
+      .orderBy(asc(tags.name)),
+    db
       .select({ total: sql<number>`count(*)::int` })
       .from(posts)
       .leftJoin(categories, eq(posts.categoryId, categories.id))
-        .where(and(...filters)),
+      .where(and(...filters)),
   ]);
 
   const hasMore = rows.length > PER_PAGE;
   const items = rows.slice(0, PER_PAGE);
-  const hasFilters = Boolean(query || category || sort === "oldest" || sort === "title");
+  const hasFilters = Boolean(query || category || tag || sort === "oldest" || sort === "title");
 
   function pageHref(nextPage: number) {
     const next = new URLSearchParams();
     if (nextPage > 1) next.set("page", String(nextPage));
     if (query) next.set("q", query);
     if (category) next.set("category", category);
+    if (tag) next.set("tag", tag);
     if (sort) next.set("sort", sort);
     const value = next.toString();
     return value ? `/?${value}` : "/";
@@ -176,18 +196,40 @@ export default async function HomePage({ searchParams }: Props) {
       <section className="border-b border-[#ded9cf] bg-[#f7f5f0] dark:border-gray-800 dark:bg-[#171816]">
         <div className="mx-auto max-w-6xl px-4 py-5">
           <FadeIn y={10}>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="mr-2 text-xs font-bold tracking-[0.12em] text-gray-400 uppercase">Jelajahi:</span>
-              {catRows.map((c) => (
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="mr-2 text-xs font-bold tracking-[0.12em] text-gray-400 uppercase">Jelajahi:</span>
+                {catRows.map((c) => (
+                  <Link
+                    key={c.slug}
+                    href={`/kategori/${c.slug}`}
+                    className="border-b border-[#cfc9be] px-2 py-1.5 text-sm text-gray-700 transition-colors hover:border-[#c83c2d] hover:text-[#c83c2d] dark:border-gray-700 dark:text-gray-300 dark:hover:text-red-400"
+                  >
+                    {c.name}
+                    <span className="ml-1.5 text-xs text-gray-400">{c.n}</span>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="mr-2 text-xs font-bold tracking-[0.12em] text-gray-400 uppercase">Tag:</span>
                 <Link
-                  key={c.slug}
-                  href={`/kategori/${c.slug}`}
-                  className="border-b border-[#cfc9be] px-2 py-1.5 text-sm text-gray-700 transition-colors hover:border-[#c83c2d] hover:text-[#c83c2d] dark:border-gray-700 dark:text-gray-300 dark:hover:text-red-400"
+                  href={tag ? `/?${new URLSearchParams({ ...(query ? { q: query } : {}), ...(category ? { category } : {}), ...(sort ? { sort } : {}) }).toString() || "/"}` : "/"}
+                  className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${!tag ? "border-red-200 bg-red-50 text-red-700" : "border-gray-200 bg-white text-gray-600 hover:border-red-300 hover:text-red-700"}`}
                 >
-                  {c.name}
-                  <span className="ml-1.5 text-xs text-gray-400">{c.n}</span>
+                  Semua
                 </Link>
-              ))}
+                {tagRows.map((entry) => (
+                  <Link
+                    key={entry.slug}
+                    href={`/?${new URLSearchParams({ ...(query ? { q: query } : {}), ...(category ? { category } : {}), ...(sort ? { sort } : {}), tag: entry.slug }).toString()}`}
+                    className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${tag === entry.slug ? "border-red-200 bg-red-50 text-red-700" : "border-gray-200 bg-white text-gray-600 hover:border-red-300 hover:text-red-700"}`}
+                  >
+                    #{entry.name}
+                    <span className="ml-1 text-[10px] opacity-70">{entry.n}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </FadeIn>
         </div>

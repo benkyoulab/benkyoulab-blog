@@ -70,6 +70,45 @@ CREATE INDEX IF NOT EXISTS idx_posts_status_published ON posts (status, publishe
 CREATE INDEX IF NOT EXISTS idx_posts_category         ON posts (category_id);
 CREATE INDEX IF NOT EXISTS idx_posts_author           ON posts (author_id);
 
+-- TAGS --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS tags (
+  id          SERIAL PRIMARY KEY,
+  name        VARCHAR(80)  NOT NULL UNIQUE,
+  slug        VARCHAR(120) NOT NULL UNIQUE,
+  description VARCHAR(240),
+  created_at  TIMESTAMPTZ  NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ  NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS post_tags (
+  post_id     INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+  tag_id      INTEGER NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
+  PRIMARY KEY (post_id, tag_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_post_tags_post_id ON post_tags (post_id);
+CREATE INDEX IF NOT EXISTS idx_post_tags_tag_id  ON post_tags (tag_id);
+
+INSERT INTO tags (name, slug, description) VALUES
+  ('JLPT', 'jlpt', 'Persiapan ujian JLPT'),
+  ('Bahasa', 'bahasa', 'Bahasa Jepang umum dan kosakata'),
+  ('Budaya', 'budaya', 'Budaya hidup dan tradisi Jepang'),
+  ('MEXT', 'mext', 'Pendidikan dan beasiswa'),
+  ('Tips', 'tips', 'Strategi belajar dan catatan praktis'),
+  ('Kanji', 'kanji', 'Kanji dan cara membacanya'),
+  ('Kosakata', 'kosakata', 'Kosakata berguna sehari-hari'),
+  ('Grammar', 'grammar', 'Pola kalimat dan tata bahasa'),
+  ('Berita', 'berita', 'Kabar dan perkembangan Jepang'),
+  ('Belajar', 'belajar', 'Strategi belajar dan rutinitas harian')
+ON CONFLICT (slug) DO NOTHING;
+
+-- Contoh relasi multi-tag per artikel ---------------------------
+-- INSERT INTO post_tags (post_id, tag_id)
+-- SELECT p.id, t.id
+-- FROM posts p
+-- JOIN tags t ON t.slug IN ('kanji', 'bahasa')
+-- WHERE p.slug = 'kanji-dasar-untuk-pemula';
+
 -- Updated_at otomatis ------------------------------------------
 CREATE OR REPLACE FUNCTION set_updated_at() RETURNS trigger AS $$
 BEGIN NEW.updated_at = now(); RETURN NEW; END;

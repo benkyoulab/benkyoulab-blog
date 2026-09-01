@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { categories, posts } from "@/db/schema";
+import { categories, posts, postTags, tags } from "@/db/schema";
 import { auth } from "@/auth";
 import { canManagePost, requireUserSession } from "@/lib/auth-guards";
 import { savePost } from "../../actions";
@@ -21,12 +21,19 @@ export default async function EditArtikelPage({ params }: { params: Promise<{ id
   if (!canManagePost(session, post.authorId)) notFound();
 
   const cats = await db.select({ id: categories.id, name: categories.name }).from(categories).orderBy(asc(categories.name));
+  const tagRows = await db.select({ id: tags.id, name: tags.name }).from(tags).orderBy(asc(tags.name));
+  const selectedTags = await db
+    .select({ name: tags.name })
+    .from(postTags)
+    .innerJoin(tags, eq(postTags.tagId, tags.id))
+    .where(eq(postTags.postId, postId));
 
   return (
     <>
       <h1 className="mb-6 text-2xl font-bold text-gray-900">Edit Artikel</h1>
       <PostForm
         categories={cats}
+        tags={tagRows}
         saveAction={savePost}
         initial={{
           id: post.id,
@@ -36,6 +43,7 @@ export default async function EditArtikelPage({ params }: { params: Promise<{ id
           thumbnailUrl: post.thumbnailUrl,
           contentHtml: post.contentHtml,
           status: post.status,
+          tagNames: selectedTags.map((t) => t.name),
         }}
       />
     </>

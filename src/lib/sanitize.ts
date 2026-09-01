@@ -8,7 +8,7 @@ const ALLOWED_TAGS = [
   "h2", "h3", "h4",
   "ul", "ol", "li",
   "blockquote",
-  "a", "img",
+  "a", "img", "iframe", "div", "span",
 ];
 
 export function sanitizeHtml(dirty: string): string {
@@ -17,8 +17,12 @@ export function sanitizeHtml(dirty: string): string {
     allowedAttributes: {
       a: ["href", "rel", "target"],
       img: ["src", "alt"],
+      iframe: ["src", "title", "allow", "allowfullscreen", "frameborder", "loading"],
+      div: ["class"],
+      span: ["class"],
     },
     allowedSchemes: ["http", "https"],
+    allowedIframeHostnames: ["www.youtube.com", "youtube.com", "player.vimeo.com"],
   });
 }
 

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { and, desc, eq, ne, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { posts, users, categories } from "@/db/schema";
+import { posts, users, categories, tags, postTags } from "@/db/schema";
 import { auth } from "@/auth";
 import PostCard from "@/components/post-card";
 import SafeImg from "@/components/safe-img";
@@ -82,14 +82,35 @@ export default async function ArtikelDetail({ params }: Props) {
   const post = await getVisiblePost(slug);
   if (!post) notFound();
 
-  // Prioritas: se-kategori. Kalau kosong: acak dari kategori lain.
-  // NB: .where() pada dynamic builder bersifat menimpa — semua kondisi dikomposisi sekali di tiap cabang.
+  const articleTags = await db
+    .select({ id: tags.id, name: tags.name, slug: tags.slug })
+    .from(postTags)
+    .innerJoin(tags, eq(postTags.tagId, tags.id))
+    .where(eq(postTags.postId, post.id))
+    .orderBy(asc(tags.name));
+
+  const tagIds = Array.from(new Set(articleTags.map((tag) => tag.id)));
+
+  // Prioritas: artikel dengan tag yang sama, lalu se-kategori, lalu acak.
   const base = db
     .select(cardColumns)
     .from(posts)
     .innerJoin(users, eq(posts.authorId, users.id))
     .leftJoin(categories, eq(posts.categoryId, categories.id))
     .$dynamic();
+
+  const sameTag =
+    tagIds.length > 0
+      ? await db
+          .select(cardColumns)
+          .from(postTags)
+          .innerJoin(posts, eq(posts.id, postTags.postId))
+          .innerJoin(users, eq(posts.authorId, users.id))
+          .leftJoin(categories, eq(posts.categoryId, categories.id))
+          .where(and(eq(posts.status, "published"), ne(posts.id, post.id), inArray(postTags.tagId, tagIds)))
+          .orderBy(desc(posts.publishedAt))
+          .limit(3)
+      : [];
 
   const seKategori = post.categorySlug
     ? await base
@@ -105,16 +126,18 @@ export default async function ArtikelDetail({ params }: Props) {
     : [];
 
   const related =
-    seKategori.length > 0
-      ? seKategori
-      : await db
-          .select(cardColumns)
-          .from(posts)
-          .innerJoin(users, eq(posts.authorId, users.id))
-          .leftJoin(categories, eq(posts.categoryId, categories.id))
-          .where(and(eq(posts.status, "published"), ne(posts.id, post.id)))
-          .orderBy(sql`random()`)
-          .limit(3);
+    sameTag.length > 0
+      ? sameTag
+      : seKategori.length > 0
+        ? seKategori
+        : await db
+            .select(cardColumns)
+            .from(posts)
+            .innerJoin(users, eq(posts.authorId, users.id))
+            .leftJoin(categories, eq(posts.categoryId, categories.id))
+            .where(and(eq(posts.status, "published"), ne(posts.id, post.id)))
+            .orderBy(sql`random()`)
+            .limit(3);
 
   return (
     <main className="flex-1 bg-white dark:bg-gray-950">
@@ -164,6 +187,22 @@ export default async function ArtikelDetail({ params }: Props) {
             {formatTanggal(post.publishedAt ?? post.updatedAt)}
           </p>
         </FadeIn>
+
+        {articleTags.length > 0 && (
+          <FadeIn delay={0.12} y={12}>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {articleTags.map((tag) => (
+                <Link
+                  key={tag.id}
+                  href={`/?tag=${tag.slug}`}
+                  className="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-100"
+                >
+                  #{tag.name}
+                </Link>
+              ))}
+            </div>
+          </FadeIn>
+        )}
 
         {post.thumbnailUrl && (
           <FadeIn delay={0.15}>

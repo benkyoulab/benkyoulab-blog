@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { posts } from "@/db/schema";
+import { posts, tags, postTags } from "@/db/schema";
 import { auth } from "@/auth";
 import { postSchema } from "@/lib/validators";
 import { sanitizeHtml, htmlToText } from "@/lib/sanitize";
@@ -22,6 +22,30 @@ function refreshPublic(slug?: string | null) {
   refreshPublicCache({ slug });
 }
 
+async function ensureTag(tagName: string) {
+  const normalized = tagName.trim();
+  if (!normalized) return null;
+  const baseSlug = slugify(normalized);
+  const [existing] = await db.select().from(tags).where(eq(tags.slug, baseSlug)).limit(1);
+  if (existing) return existing.id;
+  const [created] = await db
+    .insert(tags)
+    .values({ name: normalized, slug: baseSlug, description: `Tag otomatis: ${normalized}` })
+    .returning({ id: tags.id });
+  return created?.id ?? null;
+}
+
+async function syncPostTags(postId: number, tagNames: string[]) {
+  const unique = Array.from(new Set(tagNames.map((item) => item.trim()).filter(Boolean))).slice(0, 10);
+  await db.delete(postTags).where(eq(postTags.postId, postId));
+  if (!unique.length) return;
+
+  const ids = (await Promise.all(unique.map((name) => ensureTag(name)))).filter((id): id is number => typeof id === "number");
+  if (!ids.length) return;
+
+  await db.insert(postTags).values(ids.map((tagId) => ({ postId, tagId })));
+}
+
 async function slugExists(slug: string) {
   const [row] = await db.select({ id: posts.id }).from(posts).where(eq(posts.slug, slug)).limit(1);
   return !!row;
@@ -35,6 +59,7 @@ export async function savePost(_prev: PostActionState, formData: FormData): Prom
   const d = parsed.data;
   const id = Number(formData.get("id")) || null;
   const publish = formData.get("action") === "publish";
+  const tagNames = d.tags ?? [];
 
   // Sanitasi server-side — bukan cuma di render.
   const contentHtml = sanitizeHtml(d.contentHtml);
@@ -54,19 +79,25 @@ export async function savePost(_prev: PostActionState, formData: FormData): Prom
   }
 
   try {
+    let postId = id;
+
     if (!id) {
-      await db.insert(posts).values({
-        authorId: Number(session.user.id),
-        categoryId: d.categoryId || null,
-        title: d.title,
-        slug,
-        excerpt: d.excerpt || htmlToText(contentHtml).slice(0, 300),
-        contentHtml,
-        contentText: htmlToText(contentHtml),
-        thumbnailUrl: d.thumbnailUrl || null,
-        status: publish ? "published" : "draft",
-        publishedAt: publish ? new Date() : null,
-      });
+      const [created] = await db
+        .insert(posts)
+        .values({
+          authorId: Number(session.user.id),
+          categoryId: d.categoryId || null,
+          title: d.title,
+          slug,
+          excerpt: d.excerpt || htmlToText(contentHtml).slice(0, 300),
+          contentHtml,
+          contentText: htmlToText(contentHtml),
+          thumbnailUrl: d.thumbnailUrl || null,
+          status: publish ? "published" : "draft",
+          publishedAt: publish ? new Date() : null,
+        })
+        .returning({ id: posts.id });
+      postId = created?.id ?? null;
     } else {
       const [existing] = await db.select({ status: posts.status, publishedAt: posts.publishedAt }).from(posts).where(eq(posts.id, id));
       await db
@@ -78,12 +109,14 @@ export async function savePost(_prev: PostActionState, formData: FormData): Prom
           contentHtml,
           contentText: htmlToText(contentHtml),
           thumbnailUrl: d.thumbnailUrl || null,
-          // Aturan sederhana & konsisten dgn PRD §6.3: tombol menentukan status.
           status: publish ? "published" : "draft",
-          // published_at diisi SEKALI saat transisi draft→published pertama.
           publishedAt: publish && !existing.publishedAt ? new Date() : existing.publishedAt,
         })
         .where(eq(posts.id, id));
+    }
+
+    if (postId) {
+      await syncPostTags(postId, tagNames);
     }
   } catch (e) {
     console.error("[savePost] DB error:", e);

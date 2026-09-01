@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, text, timestamp, integer, pgEnum, index } from "drizzle-orm/pg-core";
+import { pgTable, serial, varchar, text, timestamp, integer, pgEnum, index, primaryKey } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
 // ponytail: enum native PG — upgrade path: ubah ke varchar+check kalau butuh nilai dinamis.
@@ -23,6 +23,32 @@ export const categories = pgTable("categories", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(sql`now()`),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().default(sql`now()`),
 });
+
+export const tags = pgTable("tags", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 80 }).notNull().unique(),
+  slug: varchar("slug", { length: 120 }).notNull().unique(),
+  description: varchar("description", { length: 240 }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(sql`now()`),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().default(sql`now()`),
+});
+
+export const postTags = pgTable(
+  "post_tags",
+  {
+    postId: integer("post_id")
+      .notNull()
+      .references(() => posts.id, { onDelete: "cascade" }),
+    tagId: integer("tag_id")
+      .notNull()
+      .references(() => tags.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.postId, table.tagId] }),
+    index("idx_post_tags_post_id").on(table.postId),
+    index("idx_post_tags_tag_id").on(table.tagId),
+  ]
+);
 
 export const posts = pgTable(
   "posts",

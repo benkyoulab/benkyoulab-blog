@@ -12,6 +12,10 @@ if (!admin) {
 }
 
 const editorialCategories = [
+  ["Kosakata", "kosakata", "Perbendaharaan kata dan cara menghafalnya."],
+  ["Kanji", "kanji", "Cara baca, arti, dan tips menghafal kanji."],
+  ["Tata Bahasa", "tata-bahasa", "Pola kalimat dan grammar N5-N3."],
+  ["Tips Belajar", "tips-belajar", "Strategi, jadwal, dan pengalaman belajar."],
   ["Berita Jepang", "berita-jepang", "Kabar dan perkembangan terbaru dari Jepang."],
   ["JLPT & Tes", "jlpt-tes", "Informasi seputar JLPT, tes bahasa, dan persiapannya."],
   ["MEXT & Beasiswa", "mext-beasiswa", "Panduan pendidikan, beasiswa, dan peluang studi ke Jepang."],
@@ -30,7 +34,54 @@ const kategori = Object.fromEntries(
   (await sql`select id, slug from categories`).map((c) => [c.slug, c.id])
 );
 
+const tagSeed = [
+  ["JLPT", "jlpt", "Persiapan ujian JLPT"],
+  ["Bahasa", "bahasa", "Bahasa Jepang umum dan kosakata"],
+  ["Budaya", "budaya", "Budaya hidup dan tradisi Jepang"],
+  ["MEXT", "mext", "Pendidikan dan beasiswa"],
+  ["Tips", "tips", "Strategi belajar dan catatan praktis"],
+  ["Kanji", "kanji", "Kanji dan cara membacanya"],
+  ["Kosakata", "kosakata", "Kumpulan kosakata berguna"],
+  ["Grammar", "grammar", "Pola kalimat dan tata bahasa"],
+  ["Berita", "berita", "Kabar dan perkembangan Jepang"],
+  ["Belajar", "belajar", "Strategi dan rutinitas belajar"],
+];
+
+for (const [name, slug, description] of tagSeed) {
+  await sql`
+    insert into tags (name, slug, description)
+    values (${name}, ${slug}, ${description})
+    on conflict (slug) do nothing
+  `;
+}
+
+const tagMap = Object.fromEntries(
+  (await sql`select id, slug from tags`).map((row) => [row.slug, row.id])
+);
+
 const img = (seed) => `https://picsum.photos/seed/${seed}/800/450`;
+
+const postTagAssignments = {
+  "kanji-dasar-untuk-pemula": ["kanji", "bahasa"],
+  "cara-menghafal-kanji-metode-radikal": ["kanji", "tips"],
+  "partikel-wa-dan-ga": ["bahasa", "grammar"],
+  "pola-kalimat-desu-masu": ["bahasa", "grammar"],
+  "kosakata-sehari-hari-100-pertama": ["kosakata", "bahasa"],
+  "kosakata-restoran-jepang": ["kosakata", "bahasa"],
+  "jadwal-belajar-jlpt-n5-3-bulan": ["jlpt", "tips", "belajar"],
+  "sumber-belajar-bahasa-jepang-gratis": ["bahasa", "tips", "belajar"],
+  "persiapan-jlpt-n4-apa-yang-berubah": ["jlpt", "tips", "belajar"],
+  "kalender-libur-jepang-dan-waktu-terbaik-berkunjung": ["berita", "budaya"],
+  "cara-mengikuti-pengumuman-jlpt-dan-jadwal-pendaftaran": ["jlpt", "berita"],
+  "mengenal-beasiswa-mext-jalur-dan-dokumen-awal": ["mext", "belajar"],
+  "mengapa-konbini-menjadi-bagian-penting-hidup-di-jepang": ["budaya", "berita"],
+  "transportasi-jepang-memahami-ic-card-dan-transfer-kereta": ["berita", "bahasa"],
+  "musim-tsuyu-dan-cara-warga-jepang-menghadapinya": ["budaya", "berita"],
+  "tips-membaca-berita-jepang-dengan-bantuan-furigana": ["berita", "bahasa", "jlpt"],
+  "aturan-sopan-santun-saat-berkunjung-ke-kuil-jepang": ["budaya", "berita"],
+  "apa-yang-perlu-dicek-sebelum-studi-ke-jepang": ["mext", "belajar"],
+  "membaca-papan-pengumuman-jepang-dengan-lebih-mudah": ["berita", "bahasa"],
+};
 
 const posts = [
   {
@@ -396,11 +447,26 @@ for (const p of posts) {
       ${p.status === "draft" ? null : sql`now() - (${p.daysAgo} * interval '1 day')`}
     )
     on conflict (slug) do nothing
-    returning slug
+    returning id, slug
   `;
-  if (rows.length > 0) added++;
+
+  if (rows.length > 0) {
+    added++;
+    const postId = rows[0].id;
+    const selectedTags = postTagAssignments[p.slug] ?? [];
+    const tagIds = selectedTags.map((slug) => tagMap[slug]).filter(Boolean);
+
+    if (tagIds.length > 0) {
+      await sql`
+        insert into post_tags (post_id, tag_id)
+        values ${sql`${tagIds.map((tagId) => sql`(${postId}, ${tagId})`)}`}
+        on conflict (post_id, tag_id) do nothing
+      `;
+    }
+  }
 }
 
 const [{ n }] = await sql`select count(*)::int as n from posts where status = 'published'`;
-console.log(`✅ ${added} artikel baru ditambahkan, total ${n} published di DB.`);
+const [{ tagCount }] = await sql`select count(*)::int as tagCount from post_tags`;
+console.log(`✅ ${added} artikel baru ditambahkan, total ${n} published di DB, ${tagCount} relasi tag tersimpan.`);
 await sql.end();
