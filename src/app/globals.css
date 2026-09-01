@@ -14,6 +14,16 @@ body {
   color: var(--foreground);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 .paper-grid {
   background-color: #f7f5f0;
   background-image: linear-gradient(rgba(32, 33, 31, 0.035) 1px, transparent 1px),

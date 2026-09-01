@@ -30,12 +30,8 @@ if (!isWin) {
   process.exit(0);
 }
 
-const tempBase = path.join(os.tmpdir(), 'benkyoulab-build');
+const tempBase = fs.mkdtempSync(path.join(os.tmpdir(), 'benkyoulab-build-'));
 const tempRoot = path.join(tempBase, 'repo');
-
-if (fs.existsSync(tempRoot)) {
-  fs.rmSync(tempRoot, { recursive: true, force: true });
-}
 
 function shouldSkip(filePath) {
   const rel = path.relative(root, filePath).split(path.sep).join('/');

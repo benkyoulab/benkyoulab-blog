@@ -79,6 +79,13 @@ bg-white rounded-xl, garis vermilion, shadow sangat lembut
 - Empty state menjelaskan bahwa hasil tidak ditemukan dan menyediakan aksi untuk menghapus filter.
 - Search diperbarui realtime dengan debounce 350 ms; perubahan rubrik dan urutan langsung memperbarui URL serta hasil.
 
+### Motion dan Scroll
+- GSAP mengatur entrance dan route transition pada `components/gsap-shell.tsx`; Lenis mengatur smooth scrolling dengan satu ticker GSAP.
+- Transition dibuat singkat dan editorial: opacity + gerak vertikal kecil, bukan page wipe atau efek berlebihan.
+- Semua resource/listener harus dibersihkan saat unmount atau route berubah.
+- Saat `prefers-reduced-motion: reduce` aktif, Lenis dan GSAP transition dimatikan dan browser kembali ke scroll native.
+- Gunakan genjutsu sebagai acuan interaction thesis dan mini-audit anti-slop; dependency runtime tetap GSAP/Lenis.
+
 ### Halaman Artikel
 - Container baca `max-w-prose mx-auto px-4`.
 - Header artikel: chip kategori, H1, meta (penulis · tanggal · waktu baca opsional), thumbnail full-width `rounded-2xl`.

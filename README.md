@@ -13,6 +13,7 @@ Blog berita dan info Jepang — kabar terkini, JLPT, MEXT, beasiswa, budaya, keh
 - **Auth.js v5** (JWT, Credentials provider, guard berlapis)
 - **Tiptap v3** editor + `sanitize-html` allowlist
 - **Tailwind CSS v4** + `@tailwindcss/typography` + `motion` (Framer Motion successor)
+- **GSAP** + `@gsap/react` untuk entrance dan route transitions; **Lenis** untuk smooth scrolling
 - **Vercel** untuk build & deploy
 
 ## Struktur Direktori
@@ -31,7 +32,7 @@ src/
 │   └── layout.tsx          # root layout + script anti-flash tema
 ├── components/             # site-header, featured-carousel, article-filters,
 │                           # site-footer, post-card, safe-img, motion-provider,
-│                           # fade-in, theme-toggle, editor/
+│                           # fade-in, gsap-shell, theme-toggle, editor/
 ├── db/                     # schema Drizzle + client (postgres-js)
 ├── lib/                    # format-date, sanitize, slug, validators
 ├── auth.ts                 # NextAuth config (Credentials + JWT + role)
@@ -69,6 +70,8 @@ Seeder data awal: `node --env-file=.env.local scripts/seed-artikel.mjs`. Seeder 
 | `node --env-file=.env.local scripts/test-public.mjs` | E2E publik (9 skenario) |
 
 Homepage menyediakan pencarian realtime berdasarkan judul, excerpt, dan isi artikel. Filter rubrik serta urutan terbaru, terlama, dan judul A-Z mengubah URL sehingga hasil dapat dibagikan.
+
+Motion publik memakai GSAP + Lenis melalui `components/gsap-shell.tsx`: smooth scrolling, reveal saat route berubah, dan cleanup otomatis. Animasi dinonaktifkan otomatis saat browser mengaktifkan `prefers-reduced-motion`. Prinsip anti-AI-slop dan interaction thesis mengacu pada [genjutsu](https://github.com/AThevon/genjutsu), bukan sebagai dependency runtime.
 
 ## Deployment (Vercel)
 1. Import repo `benkyoulab/benkyoulab-blog` di Vercel
