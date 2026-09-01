@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
-import { getCacheInvalidationPaths } from "./cache-refresh";
+import { getCacheInvalidationPaths } from "@/lib/cache-refresh";
 
 test("article mutation invalidates the public article and listing pages", () => {
   const paths = getCacheInvalidationPaths({ slug: "new-post", categorySlug: "kanji" });
