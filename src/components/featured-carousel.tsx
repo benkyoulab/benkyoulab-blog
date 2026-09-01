@@ -57,15 +57,16 @@ export default function FeaturedCarousel({ articles }: { articles: FeaturedArtic
               </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#20211f] via-[#20211f]/35 to-transparent" />
-            <Link href={`/artikel/${article.slug}`} className="absolute inset-0" aria-label={`Baca: ${article.title}`} />
             <div className="absolute right-5 bottom-5 left-5 text-white sm:right-7 sm:bottom-7 sm:left-7">
-              <p className="text-[0.68rem] font-bold tracking-[0.14em] text-[#f2a39b] uppercase">
-                {article.categoryName ?? "Catatan"} · {article.publishedAt ? formatTanggal(article.publishedAt) : "Terbaru"}
-              </p>
-              <h2 className="mt-2 max-w-lg text-2xl leading-tight font-bold tracking-[-0.03em] sm:text-3xl">
-                {article.title}
-              </h2>
-              {article.excerpt && <p className="mt-2 line-clamp-2 max-w-md text-sm leading-relaxed text-white/75">{article.excerpt}</p>}
+              <Link href={`/artikel/${article.slug}`} className="block" aria-label={`Baca: ${article.title}`}>
+                <p className="text-[0.68rem] font-bold tracking-[0.14em] text-[#f2a39b] uppercase">
+                  {article.categoryName ?? "Catatan"} · {article.publishedAt ? formatTanggal(article.publishedAt) : "Terbaru"}
+                </p>
+                <h2 className="mt-2 max-w-lg text-2xl leading-tight font-bold tracking-[-0.03em] sm:text-3xl">
+                  {article.title}
+                </h2>
+                {article.excerpt && <p className="mt-2 line-clamp-2 max-w-md text-sm leading-relaxed text-white/75">{article.excerpt}</p>}
+              </Link>
 
               {article.tags && article.tags.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">
