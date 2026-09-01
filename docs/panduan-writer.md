@@ -29,3 +29,10 @@
 ## Khusus Admin
 - Kelola kategori di menu **Kategori** (tambah/hapus).
 - Bisa melihat & mengedit semua artikel semua penulis.
+
+## Standar Artikel Berita dan Info
+- Bedakan fakta, konteks, dan opini secara jelas.
+- Cantumkan tanggal kejadian atau tanggal pembaruan.
+- Sertakan tautan sumber resmi di bagian akhir artikel, terutama untuk JLPT, MEXT, beasiswa, visa, cuaca, transportasi, dan kebijakan.
+- Thumbnail memakai URL HTTPS publik yang stabil; blog tidak menyimpan file gambar.
+- Hindari judul sensasional jika sumber resmi belum mengonfirmasi informasi tersebut.

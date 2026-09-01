@@ -56,6 +56,8 @@ src/
 
 Seeder data awal: `node --env-file=.env.local scripts/seed-artikel.mjs`. Seeder idempotent, menambahkan rubrik editorial dan 10 artikel info Jepang dengan thumbnail URL eksternal.
 
+Update konten editorial: `node --env-file=.env.local scripts/update-editorial-news.mjs`. Script ini mempertahankan slug/URL, memperbarui seluruh 19 artikel ke topik berita/info Jepang, menambahkan rujukan resmi, dan memastikan setiap artikel memiliki thumbnail URL HTTPS.
+
 > ⚠️ Pada Windows / drive exFAT, build langsung dapat gagal karena problem filesystem junction/readlink. Gunakan `npm run build`, yang menyalin source ke direktori temporary lalu menjalankan build webpack secara aman.
 
 ## Skrip

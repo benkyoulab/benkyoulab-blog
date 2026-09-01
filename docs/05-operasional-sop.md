@@ -190,6 +190,14 @@ node --env-file=.env.local scripts/seed-artikel.mjs
 
 Seeder menambahkan kategori editorial dan artikel contoh hanya jika slug belum ada. Setiap artikel seed published memakai thumbnail URL eksternal. Jangan menjalankan seeder terhadap database production tanpa memastikan isi artikel dan URL gambarnya memang diinginkan.
 
+Untuk memperbarui seluruh artikel demo menjadi konten editorial, jalankan:
+
+```bash
+node --env-file=.env.local scripts/update-editorial-news.mjs
+```
+
+Script mempertahankan slug, memperbarui isi 19 artikel, menambahkan sumber resmi, dan mengisi thumbnail HTTPS. Jalankan hanya setelah meninjau konten dan melakukan backup database.
+
 ### 8.2 Backup database
 
 Database utama harus dibackup secara rutin.
