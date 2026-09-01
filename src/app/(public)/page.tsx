@@ -6,6 +6,7 @@ import PostCard from "@/components/post-card";
 import FadeIn from "@/components/fade-in";
 import FeaturedCarousel from "@/components/featured-carousel";
 import ArticleFilters from "@/components/article-filters";
+import KanjiCalligraphy from "@/components/kanji-calligraphy";
 
 export const revalidate = 300;
 export const dynamic = "force-dynamic";
@@ -92,13 +93,14 @@ export default async function HomePage({ searchParams }: Props) {
     <main className="flex-1 bg-[#f7f5f0] dark:bg-[#171816]">
       {/* HERO */}
       <section className="paper-grid relative overflow-hidden border-b border-[#ded9cf] dark:border-[#353631]">
+        <KanjiCalligraphy />
         <span
           aria-hidden
           className="font-display pointer-events-none absolute -top-8 -right-4 hidden select-none text-[11rem] leading-none font-bold text-[#c83c2d]/[0.07] md:block dark:text-red-400/[0.08]"
         >
           日本語
         </span>
-        <div className="mx-auto max-w-6xl px-4 pt-14 pb-12 sm:pt-20 sm:pb-16">
+        <div className="relative z-10 mx-auto max-w-6xl px-4 pt-14 pb-12 sm:pt-20 sm:pb-16">
           <div className="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
               <FadeIn>
