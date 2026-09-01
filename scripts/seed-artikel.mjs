@@ -467,6 +467,6 @@ for (const p of posts) {
 }
 
 const [{ n }] = await sql`select count(*)::int as n from posts where status = 'published'`;
-const [{ tagCount }] = await sql`select count(*)::int as tagCount from post_tags`;
-console.log(`✅ ${added} artikel baru ditambahkan, total ${n} published di DB, ${tagCount} relasi tag tersimpan.`);
+const [{ tag_count }] = await sql`select count(*)::int as tag_count from post_tags`;
+console.log(`✅ ${added} artikel baru ditambahkan, total ${n} published di DB, ${tag_count} relasi tag tersimpan.`);
 await sql.end();
