@@ -93,8 +93,10 @@ export default async function HomePage({ searchParams }: Props) {
       .groupBy(tags.id)
       .orderBy(asc(tags.name)),
     db
-      .select({ total: sql<number>`count(*)::int` })
+      .select({ total: sql<number>`count(distinct ${posts.id})::int` })
       .from(posts)
+      .leftJoin(postTags, eq(postTags.postId, posts.id))
+      .leftJoin(tags, eq(tags.id, postTags.tagId))
       .leftJoin(categories, eq(posts.categoryId, categories.id))
       .where(and(...filters)),
   ]);
