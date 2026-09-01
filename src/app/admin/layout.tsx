@@ -1,8 +1,16 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { auth, signOut } from "@/auth";
+import { requireUserSession } from "@/lib/auth-guards";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
+  try {
+    requireUserSession(session);
+  } catch {
+    redirect("/login");
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="sticky top-0 z-10 border-b border-gray-200 bg-white/80 backdrop-blur">

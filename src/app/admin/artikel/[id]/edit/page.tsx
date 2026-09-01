@@ -3,6 +3,7 @@ import { asc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { categories, posts } from "@/db/schema";
 import { auth } from "@/auth";
+import { canManagePost, requireUserSession } from "@/lib/auth-guards";
 import { savePost } from "../../actions";
 import PostForm from "../../post-form";
 
@@ -14,10 +15,10 @@ export default async function EditArtikelPage({ params }: { params: Promise<{ id
   if (!Number.isInteger(postId)) notFound();
 
   const session = await auth();
+  requireUserSession(session);
   const [post] = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
   if (!post) notFound();
-  // Guard kepemilikan di level halaman (PRD §5): writer hanya miliknya.
-  if (session?.user?.role !== "admin" && post.authorId !== Number(session!.user!.id)) notFound();
+  if (!canManagePost(session, post.authorId)) notFound();
 
   const cats = await db.select({ id: categories.id, name: categories.name }).from(categories).orderBy(asc(categories.name));
 

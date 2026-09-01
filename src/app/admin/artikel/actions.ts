@@ -8,6 +8,7 @@ import { auth } from "@/auth";
 import { postSchema } from "@/lib/validators";
 import { sanitizeHtml, htmlToText } from "@/lib/sanitize";
 import { slugify, uniqueSlug } from "@/lib/slug";
+import { refreshPublicCache } from "@/lib/cache-refresh";
 
 export type PostActionState = { error?: string };
 
@@ -18,11 +19,7 @@ async function requireUser() {
 }
 
 function refreshPublic(slug?: string | null) {
-  revalidatePath("/");
-  if (slug) revalidatePath(`/artikel/${slug}`);
-  for (const c of ["kosakata", "kanji", "tata-bahasa", "tips-belajar"]) {
-    revalidatePath(`/kategori/${c}`);
-  }
+  refreshPublicCache({ slug });
 }
 
 async function slugExists(slug: string) {

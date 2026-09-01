@@ -34,11 +34,22 @@ src/
 │                           # site-footer, post-card, safe-img, motion-provider,
 │                           # fade-in, gsap-shell, theme-toggle, editor/
 ├── db/                     # schema Drizzle + client (postgres-js)
-├── lib/                    # format-date, sanitize, slug, validators
+├── lib/                    # format-date, sanitize, slug, validators, guards, cache refresh
 ├── auth.ts                 # NextAuth config (Credentials + JWT + role)
 ├── proxy.ts                # guard /admin/* (sebelumnya middleware.ts)
 └── types/next-auth.d.ts    # augmentasi session.user.role
 ```
+
+## Hardening produksi terkini
+- Rate limiting login per email: 5 percobaan dalam 15 menit, lalu blok otomatis dengan retry-after.
+- Guard auth berlapis di layout admin dan halaman sensitif untuk mencegah akses yang tidak terautentikasi.
+- Sistem ownership guard: writer hanya dapat mengelola artikel miliknya sendiri, admin memiliki akses penuh.
+- Cache invalidation dipusatkan agar halaman publik segar setelah create/update/delete artikel atau kategori.
+- Regression tests mencakup rate limit, auth guard, dan cache refresh.
+
+### Validator aktif
+- `npx tsx --test src/lib/auth-rate-limit.test.ts src/lib/auth-guards.test.ts src/lib/cache-refresh.test.ts`
+- `npx tsc --noEmit --pretty false`
 
 ## Setup Lokal
 1. Clone: `git clone https://github.com/benkyoulab/benkyoulab-blog.git`

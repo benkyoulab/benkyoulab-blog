@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { posts, users, categories } from "@/db/schema";
 import { auth } from "@/auth";
+import { requireUserSession } from "@/lib/auth-guards";
 import DeleteButton from "@/components/admin/delete-button";
 
 export const metadata = { title: "Artikel" };
@@ -14,6 +15,7 @@ const badge = {
 
 export default async function ArtikelListPage() {
   const session = await auth();
+  requireUserSession(session);
   const isAdmin = session?.user?.role === "admin";
 
   const rows = await db

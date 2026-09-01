@@ -7,6 +7,12 @@
 
 **Arsitektur:** Monorepo Next.js App Router. Publik = Server Components + dynamic DB reads; homepage memiliki carousel highlight dan discovery query. Admin = Client Components + Server Actions. DB diakses via Drizzle (postgres-js) melalui Supabase Transaction Pooler — pola untuk environment serverless seperti Vercel.
 
+**Status hardening 2026-09-01:**
+- Login credentials dilengkapi rate limiter dan retry policy.
+- Akses admin dikunci di layout + route guard untuk mencegah bypass.
+- Ownership guard untuk writer pada artikel ditetapkan di level halaman dan action.
+- Cache invalidation dibuat sentral dan diuji agar halaman publik selalu diperbarui setelah mutasi data.
+
 **Catatan Next.js 16 (dikonfirmasi dari docs resmi via Context7):**
 - Next.js 16 menggunakan Turbopack sebagai default, tetapi proyek ini sengaja memakai webpack untuk dev dan build agar kompatibel dengan filesystem Windows tertentu.
 - Konvensi `middleware.ts` diganti `proxy.ts` (export bernama `proxy`, runtime Node.js; edge tidak didukung di proxy).

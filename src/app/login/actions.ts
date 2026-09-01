@@ -19,7 +19,14 @@ export async function loginAction(_prev: LoginState, formData: FormData): Promis
     // Auth.js lempar redirect error (sukses) — jangan tangkep sebagai error login.
     const digest = (err as { digest?: string })?.digest;
     if (typeof digest === "string" && /^NEXT_/.test(digest)) throw err;
-    if (err instanceof AuthError) return { error: "Email atau password salah." };
+    if (err instanceof AuthError) {
+      const message = err.message?.trim();
+      return {
+        error: /Terlalu banyak|Too many/i.test(message)
+          ? message || "Terlalu banyak percobaan login. Silakan coba lagi nanti."
+          : "Email atau password salah.",
+      };
+    }
     throw err;
   }
 }
