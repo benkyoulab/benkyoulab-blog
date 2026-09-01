@@ -190,12 +190,13 @@ export default async function ArtikelDetail({ params }: Props) {
 
         {articleTags.length > 0 && (
           <FadeIn delay={0.12} y={12}>
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-6 flex flex-wrap items-center gap-2">
+              <span className="mr-1 text-[10px] font-bold tracking-[0.12em] text-gray-500 uppercase">Topik:</span>
               {articleTags.map((tag) => (
                 <Link
                   key={tag.id}
-                  href={`/?tag=${tag.slug}`}
-                  className="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-100"
+                  href={`/tag/${tag.slug}`}
+                  className="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200"
                 >
                   #{tag.name}
                 </Link>

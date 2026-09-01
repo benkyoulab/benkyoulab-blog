@@ -10,39 +10,43 @@
       {
         "id": "public-flow",
         "label": "Public read flow",
-        "focus": ["users", "public-ui", "next-app", "postgres"],
-        "note": "Readers browse published articles and category pages."
+        "focus": ["users", "public-ui", "next-app", "postgres", "tag-system"],
+        "note": "Readers browse published articles, categories, and tag landing pages."
       },
       {
         "id": "admin-flow",
         "label": "Admin write flow",
         "focus": ["admin-ui", "next-app", "auth-api", "postgres"],
-        "note": "Editors authenticate and save content through the app."
+        "note": "Editors authenticate and save content with category and tag metadata."
       }
     ]
   },
   "components": [
-    { "id": "users", "type": "external", "label": "Users", "sublabel": "Web", "pos": [30, 280], "size": [150, 70] },
+    { "id": "users", "type": "external", "label": "Users", "sublabel": "Readers + editors", "pos": [30, 280], "size": [150, 70] },
     { "id": "public-ui", "type": "frontend", "label": "Public site", "sublabel": "Editorial pages", "pos": [220, 120], "size": [190, 80] },
     { "id": "admin-ui", "type": "frontend", "label": "Admin CMS", "sublabel": "Writer dashboard", "pos": [220, 430], "size": [190, 80] },
-    { "id": "next-app", "type": "backend", "label": "Next.js app", "sublabel": "Server logic", "pos": [500, 260], "size": [200, 110] },
-    { "id": "auth-api", "type": "backend", "label": "Auth + API", "sublabel": "Credentials + routes", "pos": [760, 150], "size": [200, 90] },
-    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "Users, posts, categories", "pos": [1030, 260], "size": [170, 90] },
-    { "id": "media-hosts", "type": "external", "label": "Remote media", "sublabel": "Thumbnails", "pos": [1030, 520], "size": [170, 80] },
+    { "id": "next-app", "type": "backend", "label": "Next.js app", "sublabel": "App Router + server logic", "pos": [500, 260], "size": [220, 115] },
+    { "id": "auth-api", "type": "backend", "label": "Auth + API", "sublabel": "Credentials + guards", "pos": [760, 150], "size": [200, 90] },
+    { "id": "tag-system", "type": "backend", "label": "Tag discovery", "sublabel": "Multi-tag filters + landing pages", "pos": [760, 430], "size": [220, 100] },
+    { "id": "postgres", "type": "database", "label": "PostgreSQL", "sublabel": "Users, posts, tags, categories", "pos": [1030, 260], "size": [200, 100] },
+    { "id": "media-hosts", "type": "external", "label": "Remote media", "sublabel": "Thumbnails + embeds", "pos": [1030, 520], "size": [170, 80] },
     { "id": "hosting", "type": "cloud", "label": "Vercel", "sublabel": "Deploy runtime", "pos": [500, 560], "size": [200, 80] }
   ],
   "boundaries": [
-    { "kind": "region", "label": "Benkyou Lab", "wraps": ["public-ui", "admin-ui", "next-app", "auth-api", "postgres"] }
+    { "kind": "region", "label": "Benkyou Lab", "wraps": ["public-ui", "admin-ui", "next-app", "auth-api", "tag-system", "postgres"] }
   ],
   "connections": [
     { "id": "read-public", "from": "users", "to": "public-ui", "label": "HTTP" },
     { "id": "manage-admin", "from": "users", "to": "admin-ui", "label": "HTTPS" },
-    { "id": "render-public", "from": "public-ui", "to": "next-app", "label": "data" },
-    { "id": "save-post", "from": "admin-ui", "to": "next-app", "label": "save" },
+    { "id": "render-public", "from": "public-ui", "to": "next-app", "label": "article data" },
+    { "id": "render-tags", "from": "public-ui", "to": "tag-system", "label": "tag filters" },
+    { "id": "save-post", "from": "admin-ui", "to": "next-app", "label": "save + publish" },
+    { "id": "sync-tags", "from": "admin-ui", "to": "tag-system", "label": "tag metadata" },
     { "id": "next-auth", "from": "next-app", "to": "auth-api", "label": "session", "labelAt": [700, 220] },
-    { "id": "app-data", "from": "next-app", "to": "postgres", "label": "posts" },
-    { "id": "auth-db", "from": "auth-api", "to": "postgres", "label": "login", "labelAt": [980, 190] },
-    { "id": "thumbs", "from": "next-app", "to": "media-hosts", "label": "images", "labelAt": [840, 500], "variant": "dashed" },
+    { "id": "app-data", "from": "next-app", "to": "postgres", "label": "posts + tags" },
+    { "id": "tag-data", "from": "tag-system", "to": "postgres", "label": "tag query", "labelAt": [980, 460] },
+    { "id": "auth-db", "from": "auth-api", "to": "postgres", "label": "login + roles", "labelAt": [980, 190] },
+    { "id": "thumbs", "from": "next-app", "to": "media-hosts", "label": "images + embeds", "labelAt": [840, 500], "variant": "dashed" },
     { "id": "deploy", "from": "hosting", "to": "next-app", "label": "runtime", "labelAt": [590, 520], "variant": "dashed" }
   ],
   "cards": [
@@ -50,24 +54,24 @@
       "dot": "cyan",
       "title": "Frontend",
       "items": [
-        "Public pages render published articles and category views.",
-        "The admin dashboard handles article create, edit, and delete flows."
+        "Public pages render published articles, category archives, and tag landing pages.",
+        "The admin dashboard handles article creation, editing, publishing, and category/tag assignment."
       ]
     },
     {
       "dot": "rose",
       "title": "Auth and data",
       "items": [
-        "Auth.js validates credentials and JWT roles against PostgreSQL.",
-        "Server actions sanitize content and manage draft versus published status."
+        "Auth.js validates credentials and role-based access for admin and writer flows.",
+        "Server actions sanitize content, synchronize many-to-many tag relationships, and manage draft versus published status."
       ]
     },
     {
       "dot": "emerald",
-      "title": "Services",
+      "title": "Discovery services",
       "items": [
-        "PostgreSQL stores users, categories, and article records.",
-        "Remote image URLs supply thumbnails instead of a local object store."
+        "The app queries `tags` and `post_tags` to support multi-tag filters, related posts, and per-tag lists.",
+        "Remote image and embed URLs remain external to the application so the editorial runtime stays lightweight and portable."
       ]
     }
   ]

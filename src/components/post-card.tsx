@@ -13,6 +13,7 @@ export type PostCardData = {
   publishedAt: Date | null;
   authorName: string | null;
   categoryName: string | null;
+  tags?: Array<{ name: string; slug: string }>;
 };
 
 // ponytail: <img> via SafeImg (fallback placeholder) — next/image butuh daftar domain host eksternal.
@@ -28,6 +29,8 @@ function Thumb({ url }: { url: string | null }) {
 }
 
 export default function PostCard({ post }: { post: PostCardData }) {
+  const tags = post.tags ?? [];
+
   return (
     <m.div
       whileHover={{ y: -3 }}
@@ -57,6 +60,25 @@ export default function PostCard({ post }: { post: PostCardData }) {
               {post.excerpt}
             </p>
           )}
+
+          {tags.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {tags.slice(0, 2).map((tag) => (
+                <span
+                  key={`${post.slug}-${tag.slug}`}
+                  className="rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-[10px] font-medium text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200"
+                >
+                  #{tag.name}
+                </span>
+              ))}
+              {tags.length > 2 && (
+                <span className="rounded-full border border-gray-200 bg-gray-50 px-2 py-0.5 text-[10px] font-medium text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                  +{tags.length - 2}
+                </span>
+              )}
+            </div>
+          )}
+
           <p className="mt-auto pt-4 text-xs text-gray-400">
             {post.publishedAt ? formatTanggal(post.publishedAt) : "—"} · {post.authorName ?? "Tim"}
           </p>

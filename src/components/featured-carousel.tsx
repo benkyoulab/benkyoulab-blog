@@ -13,6 +13,7 @@ type FeaturedArticle = {
   thumbnailUrl: string | null;
   publishedAt: Date | null;
   categoryName: string | null;
+  tags?: Array<{ name: string; slug: string }>;
 };
 
 export default function FeaturedCarousel({ articles }: { articles: FeaturedArticle[] }) {
@@ -65,6 +66,20 @@ export default function FeaturedCarousel({ articles }: { articles: FeaturedArtic
                 {article.title}
               </h2>
               {article.excerpt && <p className="mt-2 line-clamp-2 max-w-md text-sm leading-relaxed text-white/75">{article.excerpt}</p>}
+
+              {article.tags && article.tags.length > 0 && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {article.tags.slice(0, 3).map((tag) => (
+                    <Link
+                      key={`${article.slug}-${tag.slug}`}
+                      href={`/tag/${tag.slug}`}
+                      className="rounded-full border border-white/30 bg-white/10 px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] text-white uppercase backdrop-blur-sm transition-colors hover:bg-white/20"
+                    >
+                      #{tag.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
           </motion.div>
         </AnimatePresence>

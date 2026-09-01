@@ -17,6 +17,11 @@ Blog berita dan info Jepang — kabar terkini, JLPT, MEXT, beasiswa, budaya, keh
 - **GSAP** + `@gsap/react` untuk entrance dan route transitions; **Lenis** untuk smooth scrolling
 - **Vercel** untuk build & deploy
 
+## Architecture artifact
+- Diagram source: [`docs/architecture/benkyoulab-architecture.json`](docs/architecture/benkyoulab-architecture.json)
+- Rendered view: [`docs/architecture/benkyoulab-architecture.html`](docs/architecture/benkyoulab-architecture.html)
+- Model saat ini mencakup editorial discovery: multi-tag filtering, per-tag landing pages, related posts, content metadata, dan admin write flow yang tersinkron dengan PostgreSQL.
+
 ## Struktur Direktori
 ```
 src/

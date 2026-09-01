@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { posts, users, categories, tags, postTags } from "@/db/schema";
 import PostCard from "@/components/post-card";
@@ -28,7 +28,16 @@ export default async function HomePage({ searchParams }: Props) {
   const pageParam = Array.isArray(params.page) ? params.page[0] : params.page;
   const query = (Array.isArray(params.q) ? params.q[0] : params.q)?.trim() ?? "";
   const category = Array.isArray(params.category) ? params.category[0] : params.category;
-  const tag = Array.isArray(params.tag) ? params.tag[0] : params.tag;
+  const rawTagValues = Array.isArray(params.tag) ? params.tag : params.tag ? [params.tag] : [];
+  const tagSlugs = Array.from(
+    new Set(
+      rawTagValues
+        .flatMap((value) => String(value).split(","))
+        .map((value) => value.trim())
+        .filter(Boolean),
+    ),
+  );
+  const tag = tagSlugs.length > 0 ? tagSlugs.join(",") : undefined;
   const sort = Array.isArray(params.sort) ? params.sort[0] : params.sort;
   const page = Math.max(1, Number(pageParam) || 1);
 
@@ -43,21 +52,13 @@ export default async function HomePage({ searchParams }: Props) {
     );
   }
   if (category) filters.push(eq(categories.slug, category));
-  if (tag) {
-    filters.push(
-      sql`EXISTS (
-        SELECT 1
-        FROM ${postTags} pt
-        INNER JOIN ${tags} t ON t.id = pt.tag_id
-        WHERE pt.post_id = ${posts.id}
-          AND t.slug = ${tag}
-      )`
-    );
+  if (tagSlugs.length > 0) {
+    filters.push(inArray(tags.slug, tagSlugs));
   }
 
   const orderBy = sort === "oldest" ? asc(posts.publishedAt) : sort === "title" ? asc(posts.title) : desc(posts.publishedAt);
 
-  const [rows, catRows, tagRows, [{ total }]] = await Promise.all([
+  const [articleRows, catRows, tagRows, [{ total }]] = await Promise.all([
     db
       .select({
         slug: posts.slug,
@@ -67,10 +68,14 @@ export default async function HomePage({ searchParams }: Props) {
         publishedAt: posts.publishedAt,
         authorName: users.name,
         categoryName: categories.name,
+        tagName: tags.name,
+        tagSlug: tags.slug,
       })
       .from(posts)
       .innerJoin(users, eq(posts.authorId, users.id))
       .leftJoin(categories, eq(posts.categoryId, categories.id))
+      .leftJoin(postTags, eq(postTags.postId, posts.id))
+      .leftJoin(tags, eq(tags.id, postTags.tagId))
       .where(and(...filters))
       .orderBy(orderBy)
       .limit(PER_PAGE + 1)
@@ -94,16 +99,39 @@ export default async function HomePage({ searchParams }: Props) {
       .where(and(...filters)),
   ]);
 
-  const hasMore = rows.length > PER_PAGE;
-  const items = rows.slice(0, PER_PAGE);
+  const articleMap = new Map<string, { slug: string; title: string; excerpt: string | null; thumbnailUrl: string | null; publishedAt: Date | null; authorName: string | null; categoryName: string | null; tags: Array<{ name: string; slug: string }> }>();
+  for (const row of articleRows) {
+    const key = row.slug;
+    const existing = articleMap.get(key) ?? {
+      slug: row.slug,
+      title: row.title,
+      excerpt: row.excerpt,
+      thumbnailUrl: row.thumbnailUrl,
+      publishedAt: row.publishedAt,
+      authorName: row.authorName,
+      categoryName: row.categoryName,
+      tags: [],
+    };
+
+    if (row.tagName && row.tagSlug) {
+      const seen = existing.tags.some((tag) => tag.slug === row.tagSlug);
+      if (!seen) existing.tags.push({ name: row.tagName, slug: row.tagSlug });
+    }
+
+    articleMap.set(key, existing);
+  }
+
+  const hasMore = articleRows.length > PER_PAGE;
+  const items = Array.from(articleMap.values()).slice(0, PER_PAGE);
   const hasFilters = Boolean(query || category || tag || sort === "oldest" || sort === "title");
+  const activeTag = tagSlugs.length > 0 ? tagRows.find((entry) => entry.slug === tagSlugs[0]) : null;
 
   function pageHref(nextPage: number) {
     const next = new URLSearchParams();
     if (nextPage > 1) next.set("page", String(nextPage));
     if (query) next.set("q", query);
     if (category) next.set("category", category);
-    if (tag) next.set("tag", tag);
+    if (tagSlugs.length > 0) next.set("tag", tagSlugs.join(","));
     if (sort) next.set("sort", sort);
     const value = next.toString();
     return value ? `/?${value}` : "/";
@@ -214,22 +242,46 @@ export default async function HomePage({ searchParams }: Props) {
               <div className="flex flex-wrap items-center gap-2">
                 <span className="mr-2 text-xs font-bold tracking-[0.12em] text-gray-400 uppercase">Tag:</span>
                 <Link
-                  href={tag ? `/?${new URLSearchParams({ ...(query ? { q: query } : {}), ...(category ? { category } : {}), ...(sort ? { sort } : {}) }).toString() || "/"}` : "/"}
-                  className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${!tag ? "border-red-200 bg-red-50 text-red-700" : "border-gray-200 bg-white text-gray-600 hover:border-red-300 hover:text-red-700"}`}
+                  href={tagSlugs.length > 0 ? `/?${new URLSearchParams({ ...(query ? { q: query } : {}), ...(category ? { category } : {}), ...(sort ? { sort } : {}) }).toString() || "/"}` : "/"}
+                  className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${tagSlugs.length === 0 ? "border-red-200 bg-red-50 text-red-700" : "border-gray-200 bg-white text-gray-600 hover:border-red-300 hover:text-red-700"}`}
                 >
                   Semua
                 </Link>
-                {tagRows.map((entry) => (
-                  <Link
-                    key={entry.slug}
-                    href={`/?${new URLSearchParams({ ...(query ? { q: query } : {}), ...(category ? { category } : {}), ...(sort ? { sort } : {}), tag: entry.slug }).toString()}`}
-                    className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${tag === entry.slug ? "border-red-200 bg-red-50 text-red-700" : "border-gray-200 bg-white text-gray-600 hover:border-red-300 hover:text-red-700"}`}
-                  >
-                    #{entry.name}
-                    <span className="ml-1 text-[10px] opacity-70">{entry.n}</span>
-                  </Link>
-                ))}
+                {tagRows.map((entry) => {
+                  const selected = tagSlugs.includes(entry.slug);
+                  const nextTagSlugs = selected ? tagSlugs.filter((slug) => slug !== entry.slug) : [...tagSlugs, entry.slug];
+                  const nextTag = nextTagSlugs.length > 0 ? nextTagSlugs.join(",") : undefined;
+                  const nextParams = new URLSearchParams({ ...(query ? { q: query } : {}), ...(category ? { category } : {}), ...(sort ? { sort } : {}) });
+                  if (nextTag) nextParams.set("tag", nextTag);
+                  else nextParams.delete("tag");
+
+                  return (
+                    <Link
+                      key={entry.slug}
+                      href={`/?${nextParams.toString()}`}
+                      className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${selected ? "border-red-200 bg-red-50 text-red-700" : "border-gray-200 bg-white text-gray-600 hover:border-red-300 hover:text-red-700"}`}
+                    >
+                      #{entry.name}
+                      <span className="ml-1 text-[10px] opacity-70">{entry.n}</span>
+                    </Link>
+                  );
+                })}
               </div>
+
+              {tagSlugs.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
+                  <span className="font-medium text-gray-500 uppercase tracking-[0.1em]">Filter aktif:</span>
+                  {tagSlugs.map((slug) => {
+                    const tagEntry = tagRows.find((entry) => entry.slug === slug);
+                    if (!tagEntry) return null;
+                    return (
+                      <span key={slug} className="rounded-full border border-red-200 bg-red-50 px-2.5 py-1 text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200">
+                        #{tagEntry.name}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </FadeIn>
         </div>
