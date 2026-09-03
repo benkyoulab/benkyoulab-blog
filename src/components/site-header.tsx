@@ -9,6 +9,7 @@ import ThemeToggle from "@/components/theme-toggle";
 const NAV = [
   { href: "/", label: "Beranda" },
   { href: "/#artikel", label: "Terbaru" },
+  { href: "/search", label: "Cari" },
   { href: "/kategori", label: "Rubrik" },
   { href: "/tentang", label: "Tentang" },
 ];

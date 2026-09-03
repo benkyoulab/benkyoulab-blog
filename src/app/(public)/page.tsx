@@ -48,6 +48,8 @@ export default async function HomePage({ searchParams }: Props) {
         ilike(posts.title, `%${query}%`),
         ilike(posts.excerpt, `%${query}%`),
         ilike(posts.contentText, `%${query}%`),
+        ilike(categories.name, `%${query}%`),
+        ilike(tags.name, `%${query}%`),
       )!,
     );
   }
@@ -58,7 +60,7 @@ export default async function HomePage({ searchParams }: Props) {
 
   const orderBy = sort === "oldest" ? asc(posts.publishedAt) : sort === "title" ? asc(posts.title) : desc(posts.publishedAt);
 
-  const [articleRows, catRows, tagRows, [{ total }]] = await Promise.all([
+  const [articleRows, catRows, tagRows, trendingRows, recentRows, [{ total }]] = await Promise.all([
     db
       .select({
         slug: posts.slug,
@@ -92,6 +94,32 @@ export default async function HomePage({ searchParams }: Props) {
       .leftJoin(postTags, eq(postTags.tagId, tags.id))
       .groupBy(tags.id)
       .orderBy(asc(tags.name)),
+    db
+      .select({
+        slug: posts.slug,
+        title: posts.title,
+        excerpt: posts.excerpt,
+        publishedAt: posts.publishedAt,
+        categoryName: categories.name,
+        views: posts.views,
+      })
+      .from(posts)
+      .leftJoin(categories, eq(posts.categoryId, categories.id))
+      .where(eq(posts.status, "published"))
+      .orderBy(desc(posts.views), desc(posts.publishedAt))
+      .limit(5),
+    db
+      .select({
+        slug: posts.slug,
+        title: posts.title,
+        publishedAt: posts.publishedAt,
+        categoryName: categories.name,
+      })
+      .from(posts)
+      .leftJoin(categories, eq(posts.categoryId, categories.id))
+      .where(eq(posts.status, "published"))
+      .orderBy(desc(posts.publishedAt))
+      .limit(5),
     db
       .select({ total: sql<number>`count(distinct ${posts.id})::int` })
       .from(posts)
@@ -304,42 +332,79 @@ export default async function HomePage({ searchParams }: Props) {
               </div>
             </FadeIn>
           ) : (
-            <>
-              <FadeIn>
-                <div className="flex items-end justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-bold tracking-[0.14em] text-[#c83c2d] uppercase">Edisi terbaru</p>
-                    <h2 className="mt-2 text-3xl font-bold tracking-[-0.03em] text-[#20211f] dark:text-white">Cerita dan kabar Jepang</h2>
+            <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_340px]">
+              <div>
+                <FadeIn>
+                  <div className="flex items-end justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-bold tracking-[0.14em] text-[#c83c2d] uppercase">Edisi terbaru</p>
+                      <h2 className="mt-2 text-3xl font-bold tracking-[-0.03em] text-[#20211f] dark:text-white">Cerita dan kabar Jepang</h2>
+                    </div>
+                    <span className="hidden text-sm text-gray-500 sm:block">Yang baru, yang penting, yang layak diikuti.</span>
                   </div>
-                  <span className="hidden text-sm text-gray-500 sm:block">Yang baru, yang penting, yang layak diikuti.</span>
+                </FadeIn>
+                <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {items.map((post) => (
+                    <PostCard key={post.slug} post={post} />
+                  ))}
                 </div>
-              </FadeIn>
-              <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {items.map((post) => (
-                  <PostCard key={post.slug} post={post} />
-                ))}
+                {(page > 1 || hasMore) && (
+                  <nav className="mt-10 flex items-center justify-center gap-3">
+                    {page > 1 && (
+                      <Link
+                        href={pageHref(page - 1)}
+                        className="rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
+                      >
+                        ← Sebelumnya
+                      </Link>
+                    )}
+                    {hasMore && (
+                      <Link
+                        href={pageHref(page + 1)}
+                        className="rounded-full bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
+                      >
+                        Berikutnya →
+                      </Link>
+                    )}
+                  </nav>
+                )}
               </div>
-              {(page > 1 || hasMore) && (
-                <nav className="mt-10 flex items-center justify-center gap-3">
-                  {page > 1 && (
-                    <Link
-                      href={pageHref(page - 1)}
-                      className="rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
-                    >
-                      ← Sebelumnya
-                    </Link>
-                  )}
-                  {hasMore && (
-                    <Link
-                      href={pageHref(page + 1)}
-                      className="rounded-full bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-red-700"
-                    >
-                      Berikutnya →
-                    </Link>
-                  )}
-                </nav>
-              )}
-            </>
+
+              <aside className="space-y-6 pt-2">
+                <div className="rounded-3xl border border-[#e4ddd0] bg-[#20211f] p-5 text-white shadow-sm dark:border-[#303330]">
+                  <div className="mb-4 flex items-center justify-between">
+                    <p className="text-[0.68rem] font-bold tracking-[0.16em] text-[#f2a39b] uppercase">Trending</p>
+                    <span className="rounded-full border border-white/20 bg-white/5 px-2 py-0.5 text-[0.6rem] font-medium text-white/80">Hot</span>
+                  </div>
+                  <div className="space-y-3">
+                    {trendingRows.map((story, index) => (
+                      <Link key={story.slug} href={`/artikel/${story.slug}`} className="group block rounded-2xl border border-white/10 bg-white/[0.04] p-3 transition-colors hover:border-[#f2a39b]/40 hover:bg-white/[0.08]">
+                        <div className="flex items-start gap-3">
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#f2a39b] text-xs font-bold text-[#20211f]">{index + 1}</span>
+                          <div>
+                            <p className="text-[0.58rem] font-semibold tracking-[0.12em] text-[#f2a39b] uppercase">{story.categoryName ?? "Artikel"}</p>
+                            <h3 className="mt-1 text-sm leading-snug font-semibold text-white group-hover:text-red-100">{story.title}</h3>
+                            <p className="mt-1 text-[0.7rem] text-white/60">{story.views ?? 0} views</p>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-3xl border border-[#e4ddd0] bg-white p-5 shadow-sm dark:border-[#303330] dark:bg-[#1b1c1a]">
+                  <p className="text-[0.68rem] font-bold tracking-[0.16em] text-[#c83c2d] uppercase">Recent</p>
+                  <div className="mt-4 space-y-3">
+                    {recentRows.map((story) => (
+                      <Link key={story.slug} href={`/artikel/${story.slug}`} className="block rounded-2xl border border-[#efe9df] p-3 transition-colors hover:border-red-200 hover:bg-red-50/60 dark:border-[#2d2f2b] dark:hover:border-red-500/30 dark:hover:bg-red-500/5">
+                        <p className="text-[0.58rem] font-semibold tracking-[0.12em] text-gray-500 uppercase dark:text-gray-400">{story.categoryName ?? "Artikel"}</p>
+                        <h4 className="mt-1 text-sm leading-snug font-semibold text-[#20211f] dark:text-white">{story.title}</h4>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </aside>
+            </div>
           )}
         </div>
       </section>

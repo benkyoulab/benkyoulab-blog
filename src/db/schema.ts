@@ -64,6 +64,7 @@ export const posts = pgTable(
     contentHtml: text("content_html").notNull(),
     contentText: text("content_text").notNull().default(""),
     thumbnailUrl: text("thumbnail_url"),
+    views: integer("views").notNull().default(0),
     status: postStatus("status").notNull().default("draft"),
     publishedAt: timestamp("published_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().default(sql`now()`),

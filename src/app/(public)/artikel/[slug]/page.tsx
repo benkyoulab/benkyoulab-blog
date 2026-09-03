@@ -28,6 +28,7 @@ async function getPost(slug: string) {
       excerpt: posts.excerpt,
       contentHtml: posts.contentHtml,
       thumbnailUrl: posts.thumbnailUrl,
+      views: posts.views,
       status: posts.status,
       publishedAt: posts.publishedAt,
       updatedAt: posts.updatedAt,
@@ -81,6 +82,11 @@ export default async function ArtikelDetail({ params }: Props) {
   const { slug } = await params;
   const post = await getVisiblePost(slug);
   if (!post) notFound();
+
+  await db
+    .update(posts)
+    .set({ views: sql`${posts.views} + 1` })
+    .where(eq(posts.id, post.id));
 
   const articleTags = await db
     .select({ id: tags.id, name: tags.name, slug: tags.slug })
@@ -139,11 +145,30 @@ export default async function ArtikelDetail({ params }: Props) {
             .orderBy(sql`random()`)
             .limit(3);
 
+  const recentArticles = await db
+    .select(cardColumns)
+    .from(posts)
+    .innerJoin(users, eq(posts.authorId, users.id))
+    .leftJoin(categories, eq(posts.categoryId, categories.id))
+    .where(eq(posts.status, "published"))
+    .orderBy(desc(posts.publishedAt))
+    .limit(5);
+
+  const popularArticles = await db
+    .select(cardColumns)
+    .from(posts)
+    .innerJoin(users, eq(posts.authorId, users.id))
+    .leftJoin(categories, eq(posts.categoryId, categories.id))
+    .where(eq(posts.status, "published"))
+    .orderBy(desc(posts.views), desc(posts.publishedAt))
+    .limit(5);
+
   return (
     <main className="flex-1 bg-white dark:bg-gray-950">
       <ReadingProgress />
 
-      <article className="mx-auto max-w-prose px-4 py-10 sm:py-14">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 lg:grid-cols-[minmax(0,1fr)_320px] sm:py-14">
+        <article className="max-w-prose">
         <FadeIn y={12}>
           <nav className="text-sm text-gray-400">
             <Link href="/" className="transition-colors hover:text-red-600">
@@ -229,6 +254,50 @@ export default async function ArtikelDetail({ params }: Props) {
           </div>
         </FadeIn>
       </article>
+
+      <aside className="space-y-6 pt-4">
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-sm font-bold tracking-[0.12em] text-[#c83c2d] uppercase">Artikel terkait</h3>
+          </div>
+          <div className="space-y-4">
+            {related.map((p) => (
+              <Link key={p.slug} href={`/artikel/${p.slug}`} className="group block rounded-xl border border-gray-100 p-3 transition-colors hover:border-red-200 hover:bg-red-50/50 dark:border-gray-800 dark:hover:border-red-500/30 dark:hover:bg-red-500/5">
+                <p className="text-[0.65rem] font-medium tracking-[0.12em] text-gray-500 uppercase dark:text-gray-400">{p.categoryName ?? "Artikel"}</p>
+                <h4 className="mt-1 text-sm leading-snug font-semibold text-gray-900 group-hover:text-red-700 dark:text-white dark:group-hover:text-red-300">{p.title}</h4>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <h3 className="mb-4 text-sm font-bold tracking-[0.12em] text-[#c83c2d] uppercase">Top views</h3>
+          <div className="space-y-4">
+            {popularArticles.map((p, index) => (
+              <Link key={p.slug} href={`/artikel/${p.slug}`} className="flex gap-3 rounded-xl border border-gray-100 p-2 transition-colors hover:border-red-200 hover:bg-red-50/50 dark:border-gray-800 dark:hover:border-red-500/30 dark:hover:bg-red-500/5">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#20211f] text-xs font-bold text-white dark:bg-[#f7f5f0] dark:text-[#20211f]">{index + 1}</span>
+                <div>
+                  <p className="text-[0.65rem] font-medium tracking-[0.12em] text-gray-500 uppercase dark:text-gray-400">{p.categoryName ?? "Artikel"}</p>
+                  <h4 className="mt-1 text-sm leading-snug font-semibold text-gray-900 dark:text-white">{p.title}</h4>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <h3 className="mb-4 text-sm font-bold tracking-[0.12em] text-[#c83c2d] uppercase">Recently</h3>
+          <div className="space-y-4">
+            {recentArticles.map((p) => (
+              <Link key={p.slug} href={`/artikel/${p.slug}`} className="block rounded-xl border border-gray-100 p-3 transition-colors hover:border-red-200 hover:bg-red-50/50 dark:border-gray-800 dark:hover:border-red-500/30 dark:hover:bg-red-500/5">
+                <p className="text-[0.65rem] font-medium tracking-[0.12em] text-gray-500 uppercase dark:text-gray-400">{p.categoryName ?? "Artikel"}</p>
+                <h4 className="mt-1 text-sm leading-snug font-semibold text-gray-900 dark:text-white">{p.title}</h4>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </aside>
+      </div>
 
       {related.length > 0 && (
         <section className="border-t border-gray-100 bg-gray-50 py-12 dark:border-gray-800 dark:bg-gray-900/40">
