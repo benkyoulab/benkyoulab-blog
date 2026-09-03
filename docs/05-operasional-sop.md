@@ -74,25 +74,18 @@ SOP ini mencakup:
    npm run lint
    npm run typecheck
    npm run test
-   ```
-3. Pastikan build berhasil:
-   ```bash
    npm run build
    ```
-4. Pastikan `.env.local` atau env lokal sudah diisi sesuai `.env.example`; jangan pernah commit file env atau token ke Git.
-5. Pastikan perubahan yang akan deploy sudah direview dan disetujui.
-6. Jika ada perubahan schema, pastikan migration plan sudah siap.
-7. Untuk perubahan schema lokal, gunakan session pooler melalui `DRIZZLY_URL` port `5432`; runtime aplikasi tetap memakai transaction pooler port `6543`.
+3. Pastikan `.env.local` atau env lokal sudah diisi sesuai `.env.example`; jangan pernah commit file env atau token ke Git.
+4. Pastikan perubahan yang akan deploy sudah direview dan disetujui.
+5. Jika ada perubahan schema, pastikan migration plan sudah siap.
+6. Untuk perubahan schema lokal, gunakan session pooler melalui `DRIZZLY_URL` port `5432`; runtime aplikasi tetap memakai transaction pooler port `6543`.
 
 ### 6.2 Deploy ke preview
 
 1. Buat PR dari branch feature ke `main`.
 2. Vercel akan otomatis membuat preview deployment.
-3. Verifikasi:
-   - halaman utama terbuka
-   - login admin bekerja
-   - artikel bisa dibuat/diedit
-   - halaman publik menampilkan data yang benar
+3. Verifikasi homepage, quick search, halaman `/search`, login admin, dashboard artikel, dan loading skeleton saat membuka artikel.
 4. Jika preview gagal, berhenti dan perbaiki perubahan sebelum merge.
 
 ### 6.3 Deploy ke production
@@ -106,6 +99,8 @@ SOP ini mencakup:
    - quick search navbar menuju hasil keyword yang benar
    - search detail `/search`, filter rubrik/tag, ranking relevansi, dan sorting mengembalikan hasil yang benar
    - sidebar Trending, Recent, related, dan top views tampil tanpa error
+   - klik artikel menampilkan loading skeleton sebelum halaman detail selesai
+   - navigasi artikel tidak menunggu query independen secara berurutan
    - login admin dapat masuk
    - dashboard artikel dapat dibuka
    - publish artikel berjalan
@@ -121,6 +116,7 @@ SOP ini mencakup:
 - [ ] Published article muncul di homepage
 - [ ] Quick search navbar dan halaman `/search` mengembalikan hasil
 - [ ] Trending/Recent/top views tampil dan metrik views bertambah saat detail artikel dibuka
+- [ ] Loading skeleton artikel terlihat saat navigasi lambat
 - [ ] Sitemap bisa diakses
 - [ ] No critical console error
 - [ ] Waktu respon halaman masuk batas normal
@@ -150,9 +146,6 @@ Metode paling cepat:
 Jika deployment dari Vercel gagal dan rollback manual diperlukan:
 
 ```bash
-git checkout <commit-stabil>
-git push origin HEAD:main
-```
 
 Catatan:
 - lakukan hanya bila commit stabil diketahui dan sudah diuji.
@@ -186,33 +179,16 @@ Jika perubahan data atau schema membuat sistem rusak:
 
 - Repository GitHub otomatis menyimpan perubahan versi.
 - Pastikan branch `main` selalu tercommit dengan perubahan yang valid.
-- Simpan tag / release bila rilis penting.
-
-### 8.1.1 Seed data editorial
-
 Seeder artikel dapat dijalankan ulang dengan aman:
 
 ```bash
 node --env-file=.env.local scripts/seed-artikel.mjs
-```
-
-Seeder menambahkan kategori editorial dan artikel contoh hanya jika slug belum ada. Setiap artikel seed published memakai thumbnail URL eksternal. Jangan menjalankan seeder terhadap database production tanpa memastikan isi artikel dan URL gambarnya memang diinginkan.
 
 Untuk memperbarui seluruh artikel demo menjadi konten editorial, jalankan:
 
 ```bash
-node --env-file=.env.local scripts/update-editorial-news.mjs
-```
-
-Script mempertahankan slug, memperbarui isi 19 artikel, menambahkan sumber resmi, dan mengisi thumbnail HTTPS. Jalankan hanya setelah meninjau konten dan melakukan backup database.
-
-### 8.2 Backup database
 
 Database utama harus dibackup secara rutin.
-
-Langkah yang disarankan:
-1. Masuk ke dashboard Supabase.
-2. Buka Database > Backups / PITR / scheduled backup.
 3. Pastikan backup otomatis aktif.
 4. Cek bahwa backup terbaru tersedia sebelum deploy berisiko tinggi.
 5. Simpan log backup tanggal dan waktu.
@@ -240,51 +216,22 @@ Hal yang harus diwaspadai:
 - perubahan environment variable
 - perubahan pada route admin
 - perubahan kerja pada file `.env` atau secret
-- perubahan pada asset dan gambar external
-
-Jika ada satu dari item di atas, maka deploy harus didahului dengan:
-- backup DB
-- review perubahan
-- testing production-like
 - penentuan rollback strategy
 
 ## 10. Incident response
 
-### Jika app down
-1. Cek Vercel deployment status.
-2. Jika deploy baru gagal, rollback ke deployment stabil.
-3. Cek logs Vercel untuk error runtime.
-4. Cek status DB Supabase.
 5. Jika DB error, restore dari backup yang terbaru.
 
 ### Jika login admin gagal
 1. Cek `AUTH_SECRET` pada Vercel.
-2. Cek apakah env variable tidak berubah.
-3. Cek apakah `DATABASE_URL` valid.
-4. Cek apakah user pada DB ada dan password hash valid.
-5. Jika perlu, lakukan recovery melalui seed/admin script.
-
-### Jika artikel tidak muncul di publik
-1. Cek status post apakah published atau draft.
 2. Cek apakah `published_at` terisi.
 3. Cek revalidate path atau cache.
 4. Cek apakah query DB berhasil.
 5. Jika bug pada publish flow, rollback ke commit sebelumnya bila perlu.
 
-## 11. Catatan operasional harian
-
-Setiap deployment atau perubahan kritis harus dicatat di log:
-- tanggal dan waktu
-- commit SHA
-- author / pelaku deploy
-- alasan deploy
 - hasil verifikasi
 - keputusan rollback / tidak rollback
 
-Contoh format:
-```text
-[2026-08-31] Deploy production
-- Commit: abc123
 - Author: developer
 - Reason: fix admin auth and SEO metadata
 - Status: success

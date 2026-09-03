@@ -35,7 +35,7 @@ Informasi tentang Jepang tersebar di banyak sumber dan sering sulit diikuti pemb
 | ID | Fitur | Detail |
 |---|---|---|
 | P-01 | Beranda | Hero highlight/carousel, daftar artikel terbaru, thumbnail, judul, excerpt, rubrik, tanggal, pagination |
-| P-02 | Detail artikel | Judul, thumbnail, konten rich text, info penulis & tanggal, kategori, tag, related posts |
+| P-02 | Detail artikel | Judul, thumbnail, konten rich text, info penulis & tanggal, kategori, tag, related posts, loading feedback, dan top views/recent |
 | P-03 | Arsip kategori | Daftar artikel per kategori |
 | P-04 | Search & discovery | Quick keyword search di navbar menuju `/search`, search realtime/detail di homepage, filter rubrik dan tag multi-tag, per-tag landing page, ranking relevansi, Trending/Recent/Top views, urutan terbaru/terlama/judul A-Z, URL query yang dapat dibagikan |
 | P-05 | SEO | Meta title/description per artikel, Open Graph image dari thumbnail URL, sitemap.xml, robots.txt |
@@ -80,7 +80,7 @@ Detail lengkap: [`02-schema.sql`](./02-schema.sql)
 
 | Aspek | Target |
 |---|---|
-| Performa | Halaman publik < 2s First Load; ISR/revalidate 300s |
+| Performa | Halaman publik < 2s First Load; ISR/revalidate 300s; navigasi artikel menampilkan skeleton dan query detail independen diproses paralel |
 | SEO | Skor Lighthouse SEO ≥ 90; sitemap otomatis |
 | Biaya | $0 — Vercel Hobby + Supabase Free Tier |
 | Keamanan | `/admin/*` dilindungi `proxy.ts` (session check — konvensi Next.js 16); role check di Server Actions (bukan cuma UI) |

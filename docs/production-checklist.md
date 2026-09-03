@@ -54,6 +54,8 @@ Catatan: verifikasi lokal dan status deployment live sudah diperbarui berdasarka
 - [x] Search detail `/search` dengan ranking relevansi, filter kategori/tag, sorting, dan pagination
 - [x] Multi-tag landing page dan filter URL tersedia
 - [x] Sidebar Trending, Recent, related posts, dan top views tersedia
+- [x] Skeleton loading tersedia pada route detail artikel
+- [x] Query detail artikel independen dijalankan paralel
 - [x] Kolom `posts.views` tersinkron ke database production
 - [x] 10 artikel editorial Jepang dengan thumbnail URL sudah di-seed
 - [x] Rubrik editorial Berita Jepang, JLPT & Tes, MEXT & Beasiswa, dan Budaya Jepang tersedia
@@ -71,6 +73,7 @@ Catatan: verifikasi lokal dan status deployment live sudah diperbarui berdasarka
 - [ ] Draft tidak tampil di publik (needs end-to-end validation on production DB)
 - [ ] Published article muncul di homepage dan kategori (needs end-to-end validation on production DB)
 - [ ] Browser check mobile + desktop selesai (blocked: no browser QA against deployed environment)
+- [ ] Navigasi artikel dan skeleton loading tervalidasi di mobile + desktop (blocked: no browser QA against deployed environment)
 - [ ] SEO dasar dan performance basic check selesai (blocked: butuh deployed site + real browser audit)
 
 ## 9. Hasil eksekusi yang sudah tervalidasi di local

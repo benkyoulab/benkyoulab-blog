@@ -14,6 +14,7 @@
 - Cache invalidation dibuat sentral dan diuji agar halaman publik selalu diperbarui setelah mutasi data.
 - Discovery editorial selesai: quick search navbar, halaman `/search` dengan ranking relevansi, filter multi-tag, landing page tag, related posts, Recent, dan Trending/Top views berbasis `posts.views`.
 - Schema production sudah disinkronkan setelah penambahan kolom `posts.views`; gunakan `DRIZZLY_URL` session pooler `:5432` untuk tooling schema.
+- UX performa artikel selesai: route loading skeleton tersedia dan query detail independen dijalankan paralel.
 
 **Catatan Next.js 16 (dikonfirmasi dari docs resmi via Context7):**
 - Next.js 16 menggunakan Turbopack sebagai default, tetapi proyek ini sengaja memakai webpack untuk dev dan build agar kompatibel dengan filesystem Windows tertentu.
@@ -187,10 +188,12 @@ Homepage menampilkan Trending berbasis `posts.views` dan Recent. Detail artikel 
 ### Task 5.3 — Detail `/artikel/[slug]`
 Render `content_html` tersanitasi + `dangerouslySetInnerHTML` (aman karena disanitasi saat simpan). Slug async: `const { slug } = await props.params` atau helper `PageProps<'/artikel/[slug]'>`. Metadata: title, description=excerpt, openGraph.images=[thumbnail_url]. Draft → notFound() kecuali preview (Task 4.4).
 
+`loading.tsx` pada segment artikel menampilkan skeleton segera saat navigasi. View counter, tag, recent, dan top views dijalankan paralel; query related tetap mengikuti hasil tag/kategori yang diperlukan.
+
 ### Task 5.4 — Kategori `/kategori/[slug]`
 Daftar artikel published per kategori + metadata.
 
-✅ Verifikasi fase 5: alur end-to-end — publish artikel dari admin → muncul di carousel dan daftar `/`, quick search navbar menuju `/search`, search/filter/sort realtime, filter multi-tag dan landing tag, sidebar Trending/Recent, klik masuk detail, filter kategori jalan. Cek incognito bahwa draft tak tampak. Commit.
+✅ Verifikasi fase 5: alur end-to-end — publish artikel dari admin → muncul di carousel dan daftar `/`, quick search navbar menuju `/search`, search/filter/sort realtime, filter multi-tag dan landing tag, sidebar Trending/Recent, klik masuk detail dengan skeleton terlihat saat loading, filter kategori jalan. Cek incognito bahwa draft tak tampak. Commit.
 
 ---
 

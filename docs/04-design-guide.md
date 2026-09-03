@@ -93,6 +93,12 @@ bg-white rounded-xl, garis vermilion, shadow sangat lembut
 - Saat `prefers-reduced-motion: reduce` aktif, Lenis dan GSAP transition dimatikan dan browser kembali ke scroll native.
 - Gunakan genjutsu sebagai acuan interaction thesis dan mini-audit anti-slop; dependency runtime tetap GSAP/Lenis.
 
+### Loading dan Navigasi Artikel
+- Route `/artikel/[slug]` memiliki `loading.tsx` route boundary dengan skeleton yang mengikuti struktur headline, metadata, thumbnail, isi, dan sidebar.
+- Skeleton harus muncul segera setelah klik tanpa menggeser layout utama secara ekstrem; gunakan `animate-pulse` yang tenang dan tetap terbaca di mode gelap.
+- `Link` internal Next.js tetap memakai prefetch default. Jangan mengganti navigasi artikel dengan anchor eksternal atau menonaktifkan prefetch tanpa alasan yang terukur.
+- Loading feedback melengkapi optimasi server; skeleton bukan pengganti perbaikan query atau pengurangan kerja berurutan.
+
 ### Halaman Artikel
 - Container baca `max-w-prose mx-auto px-4`.
 - Header artikel: chip kategori, H1, meta (penulis · tanggal · waktu baca opsional), thumbnail full-width `rounded-2xl`.

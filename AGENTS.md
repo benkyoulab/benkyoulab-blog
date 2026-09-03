@@ -19,3 +19,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Navbar memiliki quick keyword search yang mengarah ke `/search?q=...`; halaman `/search` adalah pencarian detail dengan ranking relevansi, filter kategori/tag, sorting, dan pagination.
 - Homepage dan detail artikel memiliki blok editorial Trending/Recent/Top views. Trending memakai kolom `posts.views`, jadi perubahan schema harus disinkronkan ke Supabase sebelum deploy.
 - Tag publik mendukung multi-tag query (`tag=slug-a,slug-b`) dan landing page `/tag/[slug]`; admin menyimpan tag melalui repeated checkbox values dan `FormData.getAll`.
+- Route artikel memiliki `loading.tsx` skeleton untuk feedback navigasi cepat; pertahankan loading boundary ini saat mengubah struktur route publik.
+- Query detail artikel yang independen dijalankan paralel. Jangan menambahkan `await` berantai untuk view counter, tag, recent, atau top views tanpa alasan performa yang jelas.

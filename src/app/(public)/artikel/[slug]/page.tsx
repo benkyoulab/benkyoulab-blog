@@ -83,17 +83,34 @@ export default async function ArtikelDetail({ params }: Props) {
   const post = await getVisiblePost(slug);
   if (!post) notFound();
 
-  await db
-    .update(posts)
-    .set({ views: sql`${posts.views} + 1` })
-    .where(eq(posts.id, post.id));
-
-  const articleTags = await db
-    .select({ id: tags.id, name: tags.name, slug: tags.slug })
-    .from(postTags)
-    .innerJoin(tags, eq(postTags.tagId, tags.id))
-    .where(eq(postTags.postId, post.id))
-    .orderBy(asc(tags.name));
+  const [articleTags, recentArticles, popularArticles] = await Promise.all([
+    db
+      .select({ id: tags.id, name: tags.name, slug: tags.slug })
+      .from(postTags)
+      .innerJoin(tags, eq(postTags.tagId, tags.id))
+      .where(eq(postTags.postId, post.id))
+      .orderBy(asc(tags.name)),
+    db
+      .select(cardColumns)
+      .from(posts)
+      .innerJoin(users, eq(posts.authorId, users.id))
+      .leftJoin(categories, eq(posts.categoryId, categories.id))
+      .where(eq(posts.status, "published"))
+      .orderBy(desc(posts.publishedAt))
+      .limit(5),
+    db
+      .select(cardColumns)
+      .from(posts)
+      .innerJoin(users, eq(posts.authorId, users.id))
+      .leftJoin(categories, eq(posts.categoryId, categories.id))
+      .where(eq(posts.status, "published"))
+      .orderBy(desc(posts.views), desc(posts.publishedAt))
+      .limit(5),
+    db
+      .update(posts)
+      .set({ views: sql`${posts.views} + 1` })
+      .where(eq(posts.id, post.id)),
+  ]);
 
   const tagIds = Array.from(new Set(articleTags.map((tag) => tag.id)));
 
@@ -144,24 +161,6 @@ export default async function ArtikelDetail({ params }: Props) {
             .where(and(eq(posts.status, "published"), ne(posts.id, post.id)))
             .orderBy(sql`random()`)
             .limit(3);
-
-  const recentArticles = await db
-    .select(cardColumns)
-    .from(posts)
-    .innerJoin(users, eq(posts.authorId, users.id))
-    .leftJoin(categories, eq(posts.categoryId, categories.id))
-    .where(eq(posts.status, "published"))
-    .orderBy(desc(posts.publishedAt))
-    .limit(5);
-
-  const popularArticles = await db
-    .select(cardColumns)
-    .from(posts)
-    .innerJoin(users, eq(posts.authorId, users.id))
-    .leftJoin(categories, eq(posts.categoryId, categories.id))
-    .where(eq(posts.status, "published"))
-    .orderBy(desc(posts.views), desc(posts.publishedAt))
-    .limit(5);
 
   return (
     <main className="flex-1 bg-white dark:bg-gray-950">
