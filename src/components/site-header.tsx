@@ -9,7 +9,6 @@ import ThemeToggle from "@/components/theme-toggle";
 const NAV = [
   { href: "/", label: "Beranda" },
   { href: "/#artikel", label: "Terbaru" },
-  { href: "/search", label: "Cari" },
   { href: "/kategori", label: "Rubrik" },
   { href: "/tentang", label: "Tentang" },
 ];
@@ -65,6 +64,17 @@ export default function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Navigasi utama">
+          <form action="/search" method="get" role="search" className="mr-2 flex w-52 items-center border-b border-[#cfc9be] transition-colors focus-within:border-[#c83c2d] dark:border-gray-700">
+            <label htmlFor="navbar-search" className="sr-only">Cari artikel</label>
+            <span aria-hidden className="mr-2 text-sm text-[#c83c2d]">⌕</span>
+            <input
+              id="navbar-search"
+              name="q"
+              type="search"
+              placeholder="Cari artikel..."
+              className="min-w-0 flex-1 bg-transparent py-2 text-sm text-[#20211f] outline-none placeholder:text-gray-400 dark:text-white"
+            />
+          </form>
           {NAV.map((item) => (
             <Link
               key={item.href}
@@ -130,6 +140,17 @@ export default function SiteHeader() {
           >
             <div className="border-b border-[#ded9cf] px-4 py-3 dark:border-[#353631]">
               <p className="mb-2 text-[0.65rem] font-bold tracking-[0.14em] text-[#c83c2d] uppercase">Navigasi</p>
+              <form action="/search" method="get" role="search" className="mb-3 flex items-center border-b border-[#bdb7ac] dark:border-[#4a4b45]">
+                <label htmlFor="mobile-navbar-search" className="sr-only">Cari artikel</label>
+                <span aria-hidden className="mr-2 text-sm text-[#c83c2d]">⌕</span>
+                <input
+                  id="mobile-navbar-search"
+                  name="q"
+                  type="search"
+                  placeholder="Cari berita, JLPT, budaya..."
+                  className="min-w-0 flex-1 bg-transparent py-2 text-sm text-[#20211f] outline-none placeholder:text-gray-400 dark:text-white"
+                />
+              </form>
               <div className="flex gap-5 overflow-x-auto pb-1">
               {NAV.map((item) => (
                 <Link

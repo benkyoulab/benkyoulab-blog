@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS posts (
   content_html  TEXT         NOT NULL,           -- hasil render editor, tersanitasi
   content_text  TEXT         NOT NULL DEFAULT '',-- plain text utk pencarian/cadangan excerpt
   thumbnail_url TEXT,                            -- URL eksternal, https://...
+  views         INTEGER      NOT NULL DEFAULT 0, -- counter artikel untuk top views/trending
   status        post_status  NOT NULL DEFAULT 'draft',
   published_at  TIMESTAMPTZ,
   created_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
@@ -69,6 +70,9 @@ CREATE TABLE IF NOT EXISTS posts (
 CREATE INDEX IF NOT EXISTS idx_posts_status_published ON posts (status, published_at DESC);
 CREATE INDEX IF NOT EXISTS idx_posts_category         ON posts (category_id);
 CREATE INDEX IF NOT EXISTS idx_posts_author           ON posts (author_id);
+
+-- Kompatibilitas database lama: tambahkan counter jika tabel posts sudah ada.
+ALTER TABLE posts ADD COLUMN IF NOT EXISTS views INTEGER NOT NULL DEFAULT 0;
 
 -- TAGS --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS tags (

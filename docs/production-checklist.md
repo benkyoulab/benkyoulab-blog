@@ -1,6 +1,6 @@
 # Checklist Produksi Benkyou Lab
 
-Status update: 2026-08-31
+Status update: 2026-09-03
 
 Catatan: verifikasi lokal dan status deployment live sudah diperbarui berdasarkan hasil terakhir. Item yang memerlukan akses dashboard atau kredensial production tetap harus dikonfirmasi langsung di layanan terkait.
 
@@ -28,7 +28,7 @@ Catatan: verifikasi lokal dan status deployment live sudah diperbarui berdasarka
 - [ ] PR wajib green check sebelum merge (blocked: butuh GitHub Actions / repo branch protection)
 
 ## 4. Security
-- [ ] Login protected dengan rate limit (not implemented yet)
+- [x] Login protected dengan rate limit
 - [ ] Cookie/session secure (needs production session hardening review)
 - [x] Admin route protected di backend ([src/proxy.ts](../src/proxy.ts), [src/auth.ts](../src/auth.ts))
 - [x] Role check di server action valid (guard role sudah ada di admin actions)
@@ -50,6 +50,11 @@ Catatan: verifikasi lokal dan status deployment live sudah diperbarui berdasarka
 - [x] SOP penulisan artikel dan kategori dibuat ([docs/panduan-writer.md](./panduan-writer.md))
 - [x] Homepage memiliki highlight carousel artikel terbaru
 - [x] Search realtime, filter rubrik, dan sorting tersedia di homepage
+- [x] Quick keyword search tersedia di navbar dan mengarah ke `/search`
+- [x] Search detail `/search` dengan ranking relevansi, filter kategori/tag, sorting, dan pagination
+- [x] Multi-tag landing page dan filter URL tersedia
+- [x] Sidebar Trending, Recent, related posts, dan top views tersedia
+- [x] Kolom `posts.views` tersinkron ke database production
 - [x] 10 artikel editorial Jepang dengan thumbnail URL sudah di-seed
 - [x] Rubrik editorial Berita Jepang, JLPT & Tes, MEXT & Beasiswa, dan Budaya Jepang tersedia
 
@@ -77,4 +82,4 @@ Catatan: verifikasi lokal dan status deployment live sudah diperbarui berdasarka
 - [x] lint final berhasil tanpa warning ESLint
 
 ## 10. Status saat ini
-Proyek sudah berada pada fase repo-ready, local-build-ready, dan ter-deploy di Vercel, dengan homepage editorial, carousel highlight, search/filter/sort, serta data awal berita/info Jepang. Sisa verifikasi utama adalah smoke test browser di production, konfirmasi environment variable serta backup Supabase, rotasi password admin default, dan aktivasi rate limit login.
+Proyek sudah berada pada fase repo-ready, local-build-ready, dan ter-deploy di Vercel, dengan homepage editorial, carousel highlight, quick search navbar, search detail berbasis relevansi, filter multi-tag, landing page tag, sidebar Trending/Recent, related posts, dan top views. Verifikasi operasional yang masih membutuhkan akses dashboard adalah smoke test browser production, konfirmasi environment variable dan backup Supabase, serta rotasi password admin default.

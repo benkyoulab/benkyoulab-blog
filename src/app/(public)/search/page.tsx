@@ -70,7 +70,7 @@ export default async function SearchPage({ searchParams }: Props) {
         ? asc(posts.title)
         : desc(posts.publishedAt);
 
-  const [articleRows, catRows, tagRows, [{ total }]] = await Promise.all([
+  const [articleRows, catRows, [{ total }]] = await Promise.all([
     db
       .select({
         slug: posts.slug,
@@ -99,12 +99,6 @@ export default async function SearchPage({ searchParams }: Props) {
       .leftJoin(posts, eq(posts.categoryId, categories.id))
       .groupBy(categories.id)
       .orderBy(categories.name),
-    db
-      .select({ name: tags.name, slug: tags.slug, n: sql<number>`count(${postTags.postId})::int` })
-      .from(tags)
-      .leftJoin(postTags, eq(postTags.tagId, tags.id))
-      .groupBy(tags.id)
-      .orderBy(asc(tags.name)),
     db
       .select({ total: sql<number>`count(distinct ${posts.id})::int` })
       .from(posts)

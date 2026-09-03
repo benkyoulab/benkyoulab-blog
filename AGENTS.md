@@ -16,3 +16,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Framer Motion tetap digunakan untuk interaksi komponen yang sudah ada seperti carousel, menu, dan reveal lokal. Jangan menambahkan engine animasi ketiga tanpa alasan kuat.
 - Gambar thumbnail dan gambar inline adalah URL eksternal `https://`; tidak ada upload atau storage gambar internal. Selalu sediakan fallback jika URL gagal.
 - Homepage memiliki featured carousel serta search/filter/sort server-side dengan query URL. Jangan mengubah query parameter tanpa menjaga pagination dan shareable URL.
+- Navbar memiliki quick keyword search yang mengarah ke `/search?q=...`; halaman `/search` adalah pencarian detail dengan ranking relevansi, filter kategori/tag, sorting, dan pagination.
+- Homepage dan detail artikel memiliki blok editorial Trending/Recent/Top views. Trending memakai kolom `posts.views`, jadi perubahan schema harus disinkronkan ke Supabase sebelum deploy.
+- Tag publik mendukung multi-tag query (`tag=slug-a,slug-b`) dan landing page `/tag/[slug]`; admin menyimpan tag melalui repeated checkbox values dan `FormData.getAll`.

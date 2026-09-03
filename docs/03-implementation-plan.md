@@ -7,11 +7,13 @@
 
 **Arsitektur:** Monorepo Next.js App Router. Publik = Server Components + dynamic DB reads; homepage memiliki carousel highlight dan discovery query. Admin = Client Components + Server Actions. DB diakses via Drizzle (postgres-js) melalui Supabase Transaction Pooler — pola untuk environment serverless seperti Vercel.
 
-**Status hardening 2026-09-01:**
+**Status hardening 2026-09-03:**
 - Login credentials dilengkapi rate limiter dan retry policy.
 - Akses admin dikunci di layout + route guard untuk mencegah bypass.
 - Ownership guard untuk writer pada artikel ditetapkan di level halaman dan action.
 - Cache invalidation dibuat sentral dan diuji agar halaman publik selalu diperbarui setelah mutasi data.
+- Discovery editorial selesai: quick search navbar, halaman `/search` dengan ranking relevansi, filter multi-tag, landing page tag, related posts, Recent, dan Trending/Top views berbasis `posts.views`.
+- Schema production sudah disinkronkan setelah penambahan kolom `posts.views`; gunakan `DRIZZLY_URL` session pooler `:5432` untuk tooling schema.
 
 **Catatan Next.js 16 (dikonfirmasi dari docs resmi via Context7):**
 - Next.js 16 menggunakan Turbopack sebagai default, tetapi proyek ini sengaja memakai webpack untuk dev dan build agar kompatibel dengan filesystem Windows tertentu.
@@ -20,7 +22,7 @@
 
 ---
 
-Server Component: query `posts where status='published'` dengan `q`, `category`, `sort`, dan pagination. Homepage memakai `force-dynamic` karena membaca database saat request; form discovery realtime memperbarui query URL dengan debounce 350 ms.
+Server Component: query `posts where status='published'` dengan `q`, `category`, `tag`, `sort`, dan pagination. Homepage memakai `force-dynamic` karena membaca database saat request; form discovery realtime memperbarui query URL dengan debounce 350 ms. Navbar menyediakan quick keyword search ke `/search`, sedangkan homepage mempertahankan pencarian detail.
 
 Prinsip: pastikan "hello world" sudah LIVE di Vercel sebelum bikin fitur. Deploy gagal harus ketahuan di menit pertama, bukan di akhir.
 
@@ -174,7 +176,13 @@ Tombol "Preview" membuka `/artikel/[slug]?preview=1` — halaman detail merender
 `components/post-card.tsx` (thumbnail `<img loading="lazy">` + placeholder kalau URL kosong), `featured-carousel.tsx`, `article-filters.tsx`, header/nav, footer. Styling mengikuti arah editorial study journal di `docs/04-design-guide.md`: DM Sans, Noto Serif JP, kertas hangat, vermilion hemat, garis tipis, dan kartu ringan. Tambah `@tailwindcss/typography` untuk konten artikel (`prose prose-gray`).
 
 ### Task 5.2 — Halaman daftar `/`
-Server Component: query `posts where status='published'` dengan search `q`, filter `category`, sort `latest|oldest|title`, dan pagination. Form discovery di client memperbarui URL realtime dengan debounce 350 ms; data tetap diambil server-side. `export const dynamic = "force-dynamic"` karena membaca database pada request.
+Server Component: query `posts where status='published'` dengan search `q`, filter `category` dan multi-tag, ranking relevansi, sort `latest|oldest|title`, dan pagination. Form discovery di client memperbarui URL realtime dengan debounce 350 ms; data tetap diambil server-side. `export const dynamic = "force-dynamic"` karena membaca database pada request.
+
+### Task 5.2a — Quick search navbar dan search detail
+Navbar desktop/mobile menerima keyword singkat melalui form GET dan mengarah ke `/search?q=...`. Halaman `/search` menampilkan hasil terpisah dengan ranking title/excerpt/content/category/tag, filter kategori/tag, sorting, dan pagination.
+
+### Task 5.2b — Editorial discovery sidebar
+Homepage menampilkan Trending berbasis `posts.views` dan Recent. Detail artikel menampilkan related posts, Top views, dan Recently. Detail artikel menambah counter `views` saat dibuka.
 
 ### Task 5.3 — Detail `/artikel/[slug]`
 Render `content_html` tersanitasi + `dangerouslySetInnerHTML` (aman karena disanitasi saat simpan). Slug async: `const { slug } = await props.params` atau helper `PageProps<'/artikel/[slug]'>`. Metadata: title, description=excerpt, openGraph.images=[thumbnail_url]. Draft → notFound() kecuali preview (Task 4.4).
@@ -182,7 +190,7 @@ Render `content_html` tersanitasi + `dangerouslySetInnerHTML` (aman karena disan
 ### Task 5.4 — Kategori `/kategori/[slug]`
 Daftar artikel published per kategori + metadata.
 
-✅ Verifikasi fase 5: alur end-to-end — publish artikel dari admin → muncul di carousel dan daftar `/`, search/filter/sort realtime, klik masuk detail, filter kategori jalan. Cek incognito bahwa draft tak tampak. Commit.
+✅ Verifikasi fase 5: alur end-to-end — publish artikel dari admin → muncul di carousel dan daftar `/`, quick search navbar menuju `/search`, search/filter/sort realtime, filter multi-tag dan landing tag, sidebar Trending/Recent, klik masuk detail, filter kategori jalan. Cek incognito bahwa draft tak tampak. Commit.
 
 ---
 

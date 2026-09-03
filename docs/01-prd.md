@@ -37,7 +37,7 @@ Informasi tentang Jepang tersebar di banyak sumber dan sering sulit diikuti pemb
 | P-01 | Beranda | Hero highlight/carousel, daftar artikel terbaru, thumbnail, judul, excerpt, rubrik, tanggal, pagination |
 | P-02 | Detail artikel | Judul, thumbnail, konten rich text, info penulis & tanggal, kategori, tag, related posts |
 | P-03 | Arsip kategori | Daftar artikel per kategori |
-| P-04 | Search & discovery | Search realtime, filter rubrik dan tag multi-tag, per-tag landing page, urutan terbaru/terlama/judul A-Z, URL query yang dapat dibagikan |
+| P-04 | Search & discovery | Quick keyword search di navbar menuju `/search`, search realtime/detail di homepage, filter rubrik dan tag multi-tag, per-tag landing page, ranking relevansi, Trending/Recent/Top views, urutan terbaru/terlama/judul A-Z, URL query yang dapat dibagikan |
 | P-05 | SEO | Meta title/description per artikel, Open Graph image dari thumbnail URL, sitemap.xml, robots.txt |
 
 ### 4.2 Dashboard
@@ -62,7 +62,7 @@ Detail lengkap: [`02-schema.sql`](./02-schema.sql)
 
 - **users** — id, name, email (unik), password_hash, role (`admin`|`writer`), timestamps
 - **categories** — id, name, slug (unik), description?, timestamps
-- **posts** — id, author_id→users, category_id→categories (nullable), title, slug (unik), excerpt?, content_html, content_text (untuk search/excerpt cadangan), thumbnail_url?, status (`draft`|`published`), published_at?, timestamps
+- **posts** — id, author_id→users, category_id→categories (nullable), title, slug (unik), excerpt?, content_html, content_text (untuk search/excerpt cadangan), thumbnail_url?, views (counter top views/trending), status (`draft`|`published`), published_at?, timestamps
 - **tags** — id, name, slug (unik), description?, timestamps
 - **post_tags** — id, post_id→posts, tag_id→tags, unique(post_id, tag_id)
 - Aturan: writer hanya boleh memodifikasi post miliknya; hapus kategori yang masih dipakai post → tolak atau set NULL (pilih: set NULL, post jadi "tanpa kategori"). Tag bisa dipakai multi-tag per artikel untuk discovery dan rekomendasi otomatis.
@@ -102,4 +102,4 @@ Detail lengkap: [`02-schema.sql`](./02-schema.sql)
 
 ## 10. Di Luar Cakupan v1
 
-Komentar, newsletter, editor multi-bahasa (JP/ID side-by-side), analitik lanjutan, scheduling publish, dan upload/storage gambar internal. Search v1 memakai `ILIKE` pada judul, excerpt, dan `content_text`; full-text search berbasis indeks dapat dipertimbangkan ketika volume artikel meningkat.
+Komentar, newsletter, editor multi-bahasa (JP/ID side-by-side), analitik lanjutan, scheduling publish, dan upload/storage gambar internal. Search v1 memakai `ILIKE` pada judul, excerpt, `content_text`, kategori, dan tag; halaman search memberi bobot relevansi pada title/excerpt/content. Full-text search berbasis indeks dapat dipertimbangkan ketika volume artikel meningkat.

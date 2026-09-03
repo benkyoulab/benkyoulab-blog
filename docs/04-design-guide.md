@@ -47,7 +47,7 @@ Skala: H1 `text-4xl md:text-5xl font-bold tracking-tight` · H2 section `text-3x
 ## 2. Pola Komponen (dari situs referensi)
 
 ### Header
-Sticky transparan dengan blur dan garis bawah aktif yang tipis. Desktop memiliki utility strip kecil untuk menegaskan bahwa situs adalah blog berita dan info Jepang. Kiri: logo wordmark "BenkyouLab" dengan aksen 勉 dan descriptor singkat. Kanan: nav Beranda, Terbaru, Rubrik, dan Tentang yang aktif melalui underline, bukan pill. Mobile memakai navigasi horizontal yang dapat di-scroll.
+Sticky transparan dengan blur dan garis bawah aktif yang tipis. Desktop memiliki utility strip kecil untuk menegaskan bahwa situs adalah blog berita dan info Jepang. Kiri: logo wordmark "BenkyouLab" dengan aksen 勉 dan descriptor singkat. Kanan: quick search keyword bergaris bawah, lalu nav Beranda, Terbaru, Rubrik, dan Tentang yang aktif melalui underline, bukan pill. Submit quick search menuju `/search?q=...`. Mobile menampilkan input pencarian di menu dan navigasi horizontal yang dapat di-scroll.
 
 ### Post Card (beranda & arsip)
 ```
@@ -78,6 +78,13 @@ bg-white rounded-xl, garis vermilion, shadow sangat lembut
 - Pagination harus mempertahankan semua parameter aktif.
 - Empty state menjelaskan bahwa hasil tidak ditemukan dan menyediakan aksi untuk menghapus filter.
 - Search diperbarui realtime dengan debounce 350 ms; perubahan rubrik dan urutan langsung memperbarui URL serta hasil.
+
+### Search Detail dan Sidebar Editorial
+- Halaman `/search` mempertahankan gaya editorial yang sama, tetapi memberi ruang untuk hasil keyword, ranking relevansi, filter kategori/tag, sorting, dan pagination.
+- Search query mencakup judul, excerpt, isi teks, kategori, dan tag. Hasil dengan kecocokan judul mendapat prioritas tertinggi.
+- Sidebar homepage memakai blok Trending yang lebih dominan dengan nomor ranking dan metrik views, lalu blok Recent dengan daftar ringkas.
+- Detail artikel mempertahankan Related, Top views, dan Recently sebagai modul discovery sekunder.
+- Gunakan hierarchy berita: label rubrik kecil, headline jelas, metadata ringan. Hindari menumpuk chip atau kartu dekoratif di area sidebar.
 
 ### Motion dan Scroll
 - GSAP mengatur entrance dan route transition pada `components/gsap-shell.tsx`; Lenis mengatur smooth scrolling dengan satu ticker GSAP.
@@ -117,9 +124,11 @@ Selang-seling: `bg-white` → `bg-gray-50`. Judul section pola situs referensi: 
 
 | Halaman | Penerapan token |
 |---|---|
-| Beranda `/` | Hero editorial (kabar Jepang + rubrik), grid Post Card 3 kolom (`md:grid-cols-3 gap-6`), pagination sederhana |
+| Beranda `/` | Hero editorial, quick search di navbar, search/filter detail realtime, grid artikel, sidebar Trending/Recent, pagination sederhana |
 | Detail `/artikel/[slug]` | Pola "Halaman Artikel" §2, section terkait `bg-gray-50` |
 | Kategori `/kategori/[slug]` | Hub rubrik seperti Berita Jepang, JLPT, MEXT, Budaya, dan Bahasa; grid Post Card |
+| Search `/search` | Search detail berbasis keyword, relevansi, filter kategori/tag, sorting, dan pagination |
+| Tag `/tag/[slug]` | Landing page topik dengan daftar artikel published dan metadata tag |
 | Login `/login` | Kartu tunggal putih center `rounded-2xl shadow-md`, logo, input `rounded-xl border-gray-200 focus:border-red-500 focus:ring-red-100` |
 | Admin | Bebas lebih fungsional, tapi tetap DM Sans + vermilion + radius ringan agar konsisten |
 

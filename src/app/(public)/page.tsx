@@ -154,8 +154,6 @@ export default async function HomePage({ searchParams }: Props) {
   const hasMore = articleRows.length > PER_PAGE;
   const items = Array.from(articleMap.values()).slice(0, PER_PAGE);
   const hasFilters = Boolean(query || category || tag || sort === "oldest" || sort === "title");
-  const activeTag = tagSlugs.length > 0 ? tagRows.find((entry) => entry.slug === tagSlugs[0]) : null;
-
   function pageHref(nextPage: number) {
     const next = new URLSearchParams();
     if (nextPage > 1) next.set("page", String(nextPage));

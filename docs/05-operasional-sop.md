@@ -53,6 +53,7 @@ SOP ini mencakup:
 ### Supabase
 - database utama menggunakan Supabase Postgres
 - database url production memakai pooled transaction connection (port 6543)
+- perubahan schema seperti `posts.views` harus diterapkan ke Supabase sebelum deployment yang memakai Trending/Top views
 - backup default database aktif sesuai fitur Supabase
 
 ## 5. Prinsip dasar
@@ -81,6 +82,7 @@ SOP ini mencakup:
 4. Pastikan `.env.local` atau env lokal sudah diisi sesuai `.env.example`; jangan pernah commit file env atau token ke Git.
 5. Pastikan perubahan yang akan deploy sudah direview dan disetujui.
 6. Jika ada perubahan schema, pastikan migration plan sudah siap.
+7. Untuk perubahan schema lokal, gunakan session pooler melalui `DRIZZLY_URL` port `5432`; runtime aplikasi tetap memakai transaction pooler port `6543`.
 
 ### 6.2 Deploy ke preview
 
@@ -101,7 +103,9 @@ SOP ini mencakup:
 4. Setelah build selesai, lakukan checklist berikut:
    - homepage dapat diakses
    - highlight carousel menampilkan artikel terbaru
-   - search, filter rubrik, dan sorting mengembalikan hasil yang benar
+   - quick search navbar menuju hasil keyword yang benar
+   - search detail `/search`, filter rubrik/tag, ranking relevansi, dan sorting mengembalikan hasil yang benar
+   - sidebar Trending, Recent, related, dan top views tampil tanpa error
    - login admin dapat masuk
    - dashboard artikel dapat dibuka
    - publish artikel berjalan
@@ -115,6 +119,8 @@ SOP ini mencakup:
 - [ ] CRUD artikel berjalan
 - [ ] Draft tidak muncul di publik
 - [ ] Published article muncul di homepage
+- [ ] Quick search navbar dan halaman `/search` mengembalikan hasil
+- [ ] Trending/Recent/top views tampil dan metrik views bertambah saat detail artikel dibuka
 - [ ] Sitemap bisa diakses
 - [ ] No critical console error
 - [ ] Waktu respon halaman masuk batas normal
@@ -159,6 +165,8 @@ Jika perubahan data atau schema membuat sistem rusak:
 2. Lakukan restore dari backup terbaru jika issue bersifat data-damage.
 3. Jika change hanya skema, kembalikan ke state terakhir yang stabil.
 4. Pastikan semua tampilan aplikasi yang bergantung pada struktur DB kembali normal.
+
+> **Catatan schema:** `posts.views` diperlukan oleh homepage Trending dan Top views. Jika production menampilkan `column posts.views does not exist`, terapkan schema dengan `DRIZZLY_URL` session pooler `:5432`, verifikasi query, lalu ulangi deployment/smoke test.
 
 ### 7.4 Prosedur rollback pasca incident
 

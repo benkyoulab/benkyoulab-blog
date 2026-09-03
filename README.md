@@ -11,6 +11,7 @@ Blog berita dan info Jepang — kabar terkini, JLPT, MEXT, beasiswa, budaya, keh
 - **Supabase Postgres** (transaction pooler :6543 untuk runtime, session :5432 untuk tooling)
 - **Drizzle ORM** + `drizzle-kit`
 - **Schema editorial dengan kategori + tag multi-tag** (`categories`, `tags`, `post_tags`)
+- **Discovery ala portal berita**: keyword search di navbar, search detail terpisah, filter homepage, Trending, Recent, related posts, dan top views
 - **Auth.js v5** (JWT, Credentials provider, guard berlapis)
 - **Tiptap v3** editor + `sanitize-html` allowlist
 - **Tailwind CSS v4** + `@tailwindcss/typography` + `motion` (Framer Motion successor)
@@ -27,9 +28,11 @@ Blog berita dan info Jepang — kabar terkini, JLPT, MEXT, beasiswa, budaya, keh
 src/
 ├── app/
 │   ├── (public)/           # publik: layout dgn header/footer/animasi
-│   │   ├── page.tsx        # beranda (hero carousel + search/filter + grid artikel)
+│   │   ├── page.tsx        # beranda (hero carousel + discovery detail + Trending/Recent)
 │   │   ├── artikel/[slug]/ # detail artikel + reading progress + related
 │   │   ├── kategori/       # indeks kategori + per-kategori
+│   │   ├── search/         # pencarian detail dengan relevansi dan filter
+│   │   ├── tag/[slug]/     # landing page per tag
 │   │   └── tentang/        # halaman about
 │   ├── admin/              # dashboard penulis (guarded)
 │   ├── api/auth/[...nextauth]/
@@ -66,7 +69,7 @@ src/
    AUTH_SECRET="..."           # openssl rand -base64 32
    NEXT_PUBLIC_SITE_URL="http://localhost:3000"
    ```
-4. Sinkron schema: `npx drizzle-kit push` (override `DRIZZLY_URL` ke :5432)
+4. Sinkron schema: muat `.env.local`, lalu `DRIZZLY_URL` harus memakai session pooler `:5432` sebelum menjalankan `npx drizzle-kit push`
 5. Seed admin: `node --env-file=.env.local scripts/seed-admin.mjs`
 6. Seed artikel: `node --env-file=.env.local scripts/seed-artikel.mjs` (idempotent)
 7. Jalankan: `npm run dev`
@@ -88,7 +91,7 @@ Update konten editorial: `node --env-file=.env.local scripts/update-editorial-ne
 | `node --env-file=.env.local scripts/test-sanitize.ts` | Unit test sanitasi |
 | `node --env-file=.env.local scripts/test-public.mjs` | E2E publik (9 skenario) |
 
-Homepage menyediakan pencarian realtime berdasarkan judul, excerpt, dan isi artikel. Filter rubrik, tag multi-tag, serta urutan terbaru, terlama, dan judul A-Z mengubah URL sehingga hasil dapat dibagikan.
+Homepage menyediakan pencarian realtime/detail berdasarkan judul, excerpt, isi artikel, kategori, dan tag. Navbar menyediakan pencarian keyword cepat yang mengarah ke `/search?q=...`; halaman `/search` menyediakan hasil dengan ranking relevansi, filter rubrik/tag, sorting, dan pagination. Filter rubrik, tag multi-tag, serta urutan terbaru, terlama, dan judul A-Z mengubah URL sehingga hasil dapat dibagikan. Homepage dan halaman artikel juga menyediakan blok Trending berbasis `posts.views`, Recent, related posts, dan top views.
 
 Motion publik memakai GSAP + Lenis melalui `components/gsap-shell.tsx`: smooth scrolling, reveal saat route berubah, dan cleanup otomatis. Animasi dinonaktifkan otomatis saat browser mengaktifkan `prefers-reduced-motion`. Prinsip anti-AI-slop dan interaction thesis mengacu pada [genjutsu](https://github.com/AThevon/genjutsu), bukan sebagai dependency runtime.
 
@@ -123,6 +126,7 @@ Guard berlapis: `proxy.ts` middleware + `auth()` di setiap server action + cek r
 | `drizzle-kit push` hang lewat :6543 | Set `DRIZZLY_URL` ke session pooler :5432 |
 | Login "Email atau password salah" padahal DB sudah benar | Coba incognito, hindari autofill; cek `AUTH_SECRET` di Vercel env sama dgn lokal |
 | DB Supabase tidur (>7 hari idle) | Buka dashboard Supabase untuk wake up |
+| Homepage 500 dengan `column posts.views does not exist` | Jalankan sinkronisasi schema dengan `DRIZZLY_URL` session pooler `:5432`, lalu ulangi smoke test homepage |
 || `/login` 500 (server component crash) | Jangan pernah `import { getCsrfToken } from "next-auth/react"` di **server component** — itu Client Component (`"use client"`); import-nya crash SSR. Solusi: `signIn("credentials")` otomatis handle CSRF via cookie. Jika butuh CSRF token, fetch via absolute URL (relatif `fetch("/api/...")` **gagal** di serverless: "Failed to parse URL"). |
 || `/admin/artikel` 500 — `Failed to parse URL from /api/auth/csrf` | Sama seperti di atas: hapus fetch relatif, gunakan `signIn` langsung, atau absolute URL `${process.env.NEXT_PUBLIC_APP_URL}/api/...`. |
 || Debug endpoint masih tersisa | Hapus semua route di `src/app/api/debug-*/` sebelum deploy production.|
